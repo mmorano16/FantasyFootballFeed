@@ -1,5 +1,8 @@
 package com.mmorano.fantasyfootballfeed;
 
+import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
+import com.mmorano.fantasyfootballfeed.DataParsing.LeagueParser;
+import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +20,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -29,10 +35,15 @@ public class Controller implements Initializable {
     @FXML
     Text txtSearchResponse;
 
+    private SleeperDataFetcher sleeperDataFetcher;
+    private HashSet<String> sleeperIds = new HashSet<>();
+    User user;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ddFantasyApp.getItems().addAll("Sleeper");
-
+        sleeperDataFetcher = new SleeperDataFetcher();
+        user = new User();
     }
 
     @FXML
@@ -46,7 +57,6 @@ public class Controller implements Initializable {
 
     @FXML
     protected void onAddAccountButtonClicked(ActionEvent event) {
-        System.out.println(ddFantasyApp.getValue());
         if(ddFantasyApp.getValue() == null){
             txtSearchResponse.setText("Select Fantasy App");
             txtSearchResponse.setFill(Color.RED);
@@ -55,7 +65,14 @@ public class Controller implements Initializable {
             txtSearchResponse.setFill(Color.RED);
         }
         else{
-            //query for account
+            String ownerId = sleeperDataFetcher.getOwnerId(inputUsername.getText());
+            if(ownerId.isEmpty()){
+                txtSearchResponse.setText("Unable to retrieve account data.\nEnsure Username is entered correctly.");
+                txtSearchResponse.setFill(Color.RED);
+            } else {
+                txtSearchResponse.setText(MessageFormat.format("{0} account added.", ddFantasyApp.getValue().toString()));
+                txtSearchResponse.setFill(Color.BLACK);
+            }
         }
     }
 }
