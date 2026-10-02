@@ -1,7 +1,8 @@
 package com.mmorano.fantasyfootballfeed;
 
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
-import com.mmorano.fantasyfootballfeed.DataParsing.LeagueParser;
+import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,10 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -21,34 +19,46 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class UserEntryController implements Initializable {
     @FXML
-    ComboBox ddFantasyApp;
+    private ComboBox ddFantasyApp;
     @FXML
-    TextField inputUsername;
+    private TextField inputUsername;
     @FXML
-    Button btnAddAccount, btnContinueToFeed;
+    private Button btnAddAccount, btnContinueToFeed;
     @FXML
-    Text txtSearchResponse;
+    private Text txtSearchResponse;
 
-    private SleeperDataFetcher sleeperDataFetcher;
-    private HashSet<String> sleeperIds = new HashSet<>();
-    User user;
+    private DataInitializer initializer = new DataInitializer();
+    private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
+    private User user;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ddFantasyApp.getItems().addAll("Sleeper");
-        sleeperDataFetcher = new SleeperDataFetcher();
+        initializer.initializeData();
         user = new User();
+        btnContinueToFeed.setDisable(true);
+        inputUsername.setText("mmorano16");
     }
 
     @FXML
     protected void onContinueToFeedButtonClicked(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("fantasy-feed.fxml"));
+        btnAddAccount.setDisable(true);
+        btnContinueToFeed.setDisable(true);
+
+        user.setLeagues(sleeperDataFetcher.getLeagueData(user.getSleeperId(), initializer.sleeperPlayers));
+
+        System.out.println(user.getLeagues());
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fantasy-feed.fxml"));
+
+        Parent root = loader.load();
+        FeedController feedController = loader.getController();
+        feedController.initData(user, initializer);
         Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -70,8 +80,10 @@ public class Controller implements Initializable {
                 txtSearchResponse.setText("Unable to retrieve account data.\nEnsure Username is entered correctly.");
                 txtSearchResponse.setFill(Color.RED);
             } else {
+                user.setSleeperId(ownerId);
                 txtSearchResponse.setText(MessageFormat.format("{0} account added.", ddFantasyApp.getValue().toString()));
                 txtSearchResponse.setFill(Color.BLACK);
+                btnContinueToFeed.setDisable(false);
             }
         }
     }
