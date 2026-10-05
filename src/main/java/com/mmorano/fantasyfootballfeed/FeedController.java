@@ -64,6 +64,7 @@ public class FeedController {
         Play play = new Play();
         PlayType playType = new PlayType();
         playType.setText("PASS PLAY");
+        playType.setAbbrev("INTR");
         play.setPlayType(playType);
         play.setPeriod(1);
         play.setClockTime("10:45");
@@ -84,6 +85,10 @@ public class FeedController {
         participant.setPlayer(player);
         participant.setScoreChange(points);
         participant.setTotalScore(13.48);
+        if(points == 1)
+            play.setTurnover(true);
+        if(points == 0)
+            play.setScoringPlay(true);
         for(int i = 0; i < num; i++) {
             play.getParticipants().put(String.valueOf(i), participant);
         }

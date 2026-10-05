@@ -35,7 +35,7 @@ public class PlayCell extends ListCell<Play> {
     // Bottom description
     private final Label playDescriptionLabel = new Label();
 
-    private final Font font = Font.font("Syste", FontWeight.NORMAL, 16);
+    private final Font font = Font.font("System", FontWeight.NORMAL, 16);
     private final HashMap<String, String> teams;
     private final User user;
     private final double listWidth = listViewWidth - 36;
@@ -84,10 +84,17 @@ public class PlayCell extends ListCell<Play> {
         } else {
             // 1. Turnover / TD Logic Reset
             setDefaults(TOorTDLabel);
-            if (!play.isTurnover()) {
+            if (!(play.isTurnover() || play.isScoringPlay())) {
                 TOorTDLabel.setVisible(false);
                 TOorTDLabel.setManaged(false); // Prevents layout engine reserving invisible layout space
             } else {
+                TOorTDLabel.setText(play.isScoringPlay() ? "TD" :
+                        play.getPlayType().getAbbrev().equals("INTR") ? "INT" : "FUM");
+                TOorTDLabel.setTextFill(Color.WHITESMOKE);
+                TOorTDLabel.setBackground(new Background(new BackgroundFill(
+                        play.isTurnover() ? Color.rgb(255, 0, 0, .5) : Color.rgb(0, 235, 30, 0.5),
+                        new CornerRadii(5), new Insets(-1))));
+
                 TOorTDLabel.setVisible(true);
                 TOorTDLabel.setManaged(true);
                 // Ensure text is filled if you customize turnover text strings
@@ -165,7 +172,7 @@ public class PlayCell extends ListCell<Play> {
                 pointsChangeText.setFill(Color.RED);
             else
                 pointsChangeText.setFill(Color.BLACK);
-            pointsChangeText.setStyle("-fx-font-weight: bold;");
+
             Text ptsText = new Text("PTS");
             setDefaults(ptsText);
             TextFlow playPointsText = new TextFlow(pointsChangeText, new Text("\n"), ptsText);
