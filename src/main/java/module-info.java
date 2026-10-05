@@ -7,6 +7,8 @@ module com.mmorano.fantasyfootballfeed {
     requires org.apache.httpcomponents.httpcore;
     requires java.xml.crypto;
     requires com.google.gson;
+    requires javafx.graphics;
+    requires java.compiler;
 
     opens com.mmorano.fantasyfootballfeed to javafx.fxml;
     exports com.mmorano.fantasyfootballfeed;

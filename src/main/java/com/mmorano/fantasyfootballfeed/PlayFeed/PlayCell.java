@@ -1,50 +1,205 @@
 package com.mmorano.fantasyfootballfeed.PlayFeed;
-import javafx.scene.control.Button;
+
+import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.User;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.*;
+
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.HashMap;
+
+import static com.mmorano.fantasyfootballfeed.UserEntryController.listViewWidth;
 
 public class PlayCell extends ListCell<Play> {
-    private final AnchorPane anchorPane = new AnchorPane();
-    private final Label titleLabel = new Label();
-    private final Button actionButton = new Button("Action");
+    // Top structural container
+    private final VBox mainContainer = new VBox(10);
 
-    public PlayCell() {
+    // Rows
+    private final HBox headerRow = new HBox(10);
+    private final VBox participantPane = new VBox(6);
+
+    // Header components
+    private final Label TOorTDLabel = new Label();
+    private final Label playLabel = new Label();
+    private final Label timeLabel = new Label();
+    private final Label scoreLabel = new Label();
+
+    // Bottom description
+    private final Label playDescriptionLabel = new Label();
+
+    private final Font font = Font.font("System", FontWeight.NORMAL, 16);
+    private final HashMap<String, String> teams;
+    private final User user;
+    private final double listWidth = listViewWidth - 36;
+    private final DecimalFormat df = new DecimalFormat("0.00");
+
+    public PlayCell(HashMap<String, String> teams, User user) {
         super();
-        // Setup layout constraints for the elements inside the AnchorPane
-        AnchorPane.setLeftAnchor(titleLabel, 10.0);
-        AnchorPane.setTopAnchor(titleLabel, 5.0);
+        this.teams = teams;
+        this.user = user;
 
-        AnchorPane.setRightAnchor(actionButton, 10.0);
-        AnchorPane.setTopAnchor(actionButton, 2.0);
+        // Configure header row layouts (Push score to the far right using a Spacer)
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        headerRow.setAlignment(Pos.CENTER_LEFT);
+        headerRow.getChildren().addAll(TOorTDLabel, playLabel, timeLabel, spacer, scoreLabel);
 
-        // Add children to the template layout
-        anchorPane.getChildren().addAll(titleLabel, actionButton);
-        anchorPane.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        // Configure main outer box style
+        mainContainer.setPadding(new Insets(8));
+        mainContainer.setMaxWidth(listWidth);
+        mainContainer.setPrefWidth(listWidth);
+        mainContainer.setBorder(new Border(new BorderStroke(
+                Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(2)
+        )));
+        mainContainer.setBackground(new Background(new BackgroundFill(Color.rgb(230, 230, 230), new CornerRadii(5), Insets.EMPTY)));
 
-        // Optional: Attach logic or click handlers directly inside the cell
-        actionButton.setOnAction(event -> {
-            Play item = getItem();
-            System.out.println("Button clicked for item: " + item.getId());
-        });
+        // Configure internal participant block styling
+        participantPane.setPadding(new Insets(6));
+        participantPane.setBackground(new Background(new BackgroundFill(Color.rgb(200, 200, 200), new CornerRadii(5), Insets.EMPTY)));
+
+        // Wrap layout together structurally
+        mainContainer.getChildren().addAll(headerRow, participantPane, playDescriptionLabel);
+
+        // Prevent description text wrapping overlap bugs
+        playDescriptionLabel.setWrapText(true);
+        playDescriptionLabel.setMaxWidth(listWidth);
     }
 
     @Override
-    protected void updateItem(Play item, boolean empty) {
-        super.updateItem(item, empty);
+    protected void updateItem(Play play, boolean empty) {
+        super.updateItem(play, empty);
 
-        // If the row is empty, render nothing to keep the view clean
-        if (empty || item == null) {
+        if (empty || play == null) {
             setText(null);
             setGraphic(null);
+            setStyle("");
         } else {
-            // Bind your data model values to the UI controls
-            titleLabel.setText(item.getId());
+            // 1. Turnover / TD Logic Reset
+            setDefaults(TOorTDLabel);
+            if (!(play.isTurnover() || play.isScoringPlay())) {
+                TOorTDLabel.setVisible(false);
+                TOorTDLabel.setManaged(false); // Prevents layout engine reserving invisible layout space
+            } else {
+                TOorTDLabel.setText(play.isScoringPlay() ? "TD" :
+                        play.getPlayType().getAbbrev().equals("INTR") ? "INT" : "FUM");
+                TOorTDLabel.setTextFill(Color.WHITESMOKE);
+                TOorTDLabel.setBackground(new Background(new BackgroundFill(
+                        play.isTurnover() ? Color.rgb(255, 0, 0, .5) : Color.rgb(0, 235, 30, 0.5),
+                        new CornerRadii(5), new Insets(-1))));
 
-            // Set the AnchorPane as the physical visual node of this cell
-            setGraphic(anchorPane);
+                TOorTDLabel.setVisible(true);
+                TOorTDLabel.setManaged(true);
+                // Ensure text is filled if you customize turnover text strings
+            }
+
+            // 2. Map Text Metrics safely
+            setDefaults(playLabel);
+            playLabel.setText(play.getPlayType().getText());
+
+            setDefaults(timeLabel);
+            timeLabel.setText(MessageFormat.format("(Q{0} {1})", play.getPeriod(), play.getClockTime()));
+
+            setDefaults(scoreLabel);
+            scoreLabel.setText(MessageFormat.format("{0} {1}-{2} {3}", play.getHomeAbbrev(), play.getHomeScore(), play.getAwayScore(), play.getAwayAbbrev()));
+
+            // 3. Rebuild inner lists cleanly
+            buildParticipantPane(play.getParticipants());
+
+            // 4. Description mapping
+            setDefaults(playDescriptionLabel);
+            playDescriptionLabel.setText(MessageFormat.format("{0} - {1}", play.getDownDistanceText(), play.getText()));
+
+            // Attach root UI graphic component safely
+            setGraphic(mainContainer);
         }
     }
-}
 
+    private void buildParticipantPane(HashMap<String, Participant> participants) {
+        // CRITICAL FIX: Erase nodes from prior cell states before drawing new entries
+        participantPane.getChildren().clear();
+
+        if (participants == null || participants.isEmpty()) {
+            participantPane.setVisible(false);
+            participantPane.setManaged(false);
+            return;
+        }
+
+        participantPane.setVisible(true);
+        participantPane.setManaged(true);
+
+        participants.forEach((id, participant) -> {
+            Player player = participant.getPlayer();
+
+            // Row Container for individual player card details
+            HBox playerRow = new HBox(12);
+            playerRow.setAlignment(Pos.CENTER_LEFT);
+            playerRow.setPadding(new Insets(4, 0, 4, 0));
+
+            // Image profile node setup
+            ImageView playerImage = new ImageView(new Image(player.getPlayerImage(), true));
+            playerImage.setFitHeight(60);
+            playerImage.setFitWidth(60);
+            playerImage.setPreserveRatio(true);
+            playerImage.setSmooth(true);
+
+            // Data descriptor block
+            Text playerNameText = new Text(player.getPlayerName());
+            setDefaults(playerNameText);
+            playerNameText.setStyle("-fx-font-weight: bold;");
+            Text teamPosText = new Text(MessageFormat.format("{0} - {1}", teams.get(player.getTeamId()), player.getPosition()));
+            setDefaults(teamPosText);
+            TextFlow playerDetailsText = new TextFlow(playerNameText, new Text("\n"), teamPosText);
+
+            Region middleSpacer = new Region();
+            HBox.setHgrow(middleSpacer, Priority.ALWAYS);
+
+            // Scoring change labels (Push score tracking values rightward safely)
+            Text pointsChangeText = new Text(
+                    MessageFormat.format("{0}{1}", participant.getScoreChange() >= 0 ? "+" : "", df.format(participant.getScoreChange()))
+            );
+            setDefaults(pointsChangeText);
+            if(participant.getScoreChange() > 0)
+                pointsChangeText.setFill(Color.GREEN);
+            else if(participant.getScoreChange() < 0)
+                pointsChangeText.setFill(Color.RED);
+            else
+                pointsChangeText.setFill(Color.BLACK);
+
+            Text ptsText = new Text("PTS");
+            setDefaults(ptsText);
+            TextFlow playPointsText = new TextFlow(pointsChangeText, new Text("\n"), ptsText);
+            playPointsText.setTextAlignment(TextAlignment.CENTER);
+
+            Text scoreText = new Text(String.valueOf(df.format(player.getScore())));
+            setDefaults(scoreText);
+            scoreText.setStyle("-fx-font-weight: bold;");
+            Text totalText = new Text("TOTAL");
+            setDefaults(totalText);
+            TextFlow totalScoreText = new TextFlow(scoreText, new Text("\n"), totalText);
+            totalScoreText.setTextAlignment(TextAlignment.CENTER);
+
+            // Build layout structure
+            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, playPointsText, totalScoreText);
+            participantPane.getChildren().add(playerRow);
+        });
+    }
+
+    private void setDefaults(Label label) {
+        label.setFont(font);
+        label.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        label.setPrefWidth(Region.USE_COMPUTED_SIZE);
+    }
+    private void setDefaults(Text text){
+        text.setFont(font);
+        text.prefHeight(Region.USE_COMPUTED_SIZE);
+        text.prefWidth(Region.USE_COMPUTED_SIZE);
+    }
+}

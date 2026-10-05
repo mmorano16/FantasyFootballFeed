@@ -1,5 +1,6 @@
 package com.mmorano.fantasyfootballfeed.Fantasy;
 import com.google.gson.annotations.SerializedName;
+import javafx.scene.image.Image;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +14,7 @@ public class Player implements Serializable{
     private String playerName;
     private String teamId;
     private String position;
+    private String playerImage;
     private double score = 0;
 
     public Player(){}
@@ -70,6 +72,14 @@ public class Player implements Serializable{
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public String getPlayerImage() {
+        return playerImage;
+    }
+
+    public void setPlayerImage(String playerImage) {
+        this.playerImage = playerImage;
     }
 
     @Override

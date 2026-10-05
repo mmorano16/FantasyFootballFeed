@@ -13,7 +13,9 @@ import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,15 +25,15 @@ public class DataInitializer {
     private EspnDataFetcher espnDataFetcher = new EspnDataFetcher();
     private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
 
-    private HashMap<String, String> teams;
+    public HashMap<String, String> teams;
     public ArrayList<Player> allPlayers = new ArrayList<>();
     public HashMap<String, Player> espnPlayers = new HashMap<>();
     public HashMap<String, Player> sleeperPlayers = new HashMap<>();
     private ArrayList<League> leagues = new ArrayList<>();
     private ArrayList<String> eventIds = new ArrayList<>();
     //private HashMap<String, Event> events = new HashMap<>();
-
     private final File playersFile = new File("players.ser");
+
     public void initializeData(){
         teams = espnDataFetcher.getTeamData();
 
@@ -57,7 +59,15 @@ public class DataInitializer {
     }
 
     private boolean fileNeedsUpdate(){
-        return true;
+        boolean result = false;
+        try {
+            FileTime fileTime = Files.getLastModifiedTime(playersFile.toPath());
+            LocalDate lastModifiedDate = fileTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            result = lastModifiedDate.isBefore(LocalDate.now());
+        } catch (IOException e) {
+            result = true;
+        }
+        return result;
     }
 
     private void updatePlayersFile() {

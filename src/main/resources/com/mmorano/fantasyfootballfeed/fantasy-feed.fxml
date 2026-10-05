@@ -13,12 +13,12 @@
                   <Insets />
                </HBox.margin>
             </AnchorPane>
-            <ListView fx:id="listFeed" prefHeight="1080.0" prefWidth="768.0" style="-fx-border-width: 2; -fx-border-color: black;" HBox.hgrow="ALWAYS">
+            <ListView fx:id="listFeed" prefHeight="1080.0" prefWidth="500.0" style="-fx-border-width: 2; -fx-border-color: black;" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </ListView>
-            <TabPane fx:id="tabPaneMatchups" prefHeight="1080.0" prefWidth="768.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="120.0" tabMinHeight="50.0" tabMinWidth="120.0" HBox.hgrow="ALWAYS">
+            <TabPane fx:id="tabPaneMatchups" prefHeight="1080.0" prefWidth="1036.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="120.0" tabMinHeight="50.0" tabMinWidth="120.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
