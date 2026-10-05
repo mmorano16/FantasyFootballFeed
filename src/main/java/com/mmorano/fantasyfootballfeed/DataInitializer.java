@@ -25,7 +25,7 @@ public class DataInitializer {
     private EspnDataFetcher espnDataFetcher = new EspnDataFetcher();
     private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
 
-    private HashMap<String, String> teams;
+    public HashMap<String, String> teams;
     public ArrayList<Player> allPlayers = new ArrayList<>();
     public HashMap<String, Player> espnPlayers = new HashMap<>();
     public HashMap<String, Player> sleeperPlayers = new HashMap<>();

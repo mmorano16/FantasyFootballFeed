@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -35,6 +36,8 @@ public class UserEntryController implements Initializable {
     private DataInitializer initializer = new DataInitializer();
     private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
     private User user;
+
+    public static double listViewWidth;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -63,6 +66,7 @@ public class UserEntryController implements Initializable {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+        listViewWidth = feedController.listFeed.getPrefWidth();
     }
 
     @FXML
