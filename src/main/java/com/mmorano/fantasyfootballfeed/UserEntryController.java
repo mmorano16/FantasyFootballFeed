@@ -42,6 +42,7 @@ public class UserEntryController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ddFantasyApp.getItems().addAll("Sleeper");
+        ddFantasyApp.setValue("Sleeper");
         initializer.initializeData();
         user = new User();
         btnContinueToFeed.setDisable(true);

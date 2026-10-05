@@ -42,6 +42,9 @@ public class PlayerParser extends DataParser{
         if(playerObject != null && player.getPlayerName() != null && !player.getPlayerName().isEmpty()){
             player.setEspnId(playerObject.get("id").getAsString());
             player.setTeamId(parseTeamId(playerObject));
+            if(playerObject.has("headshot"))
+                //if(playerObject.get("headshot").getAsJsonObject().has("href"))
+                player.setPlayerImage(playerObject.get("headshot").getAsJsonObject().get("href").getAsString());
         }
     }
 
