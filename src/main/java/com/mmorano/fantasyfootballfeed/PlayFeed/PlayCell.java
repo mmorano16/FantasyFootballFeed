@@ -10,10 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
@@ -36,10 +35,11 @@ public class PlayCell extends ListCell<Play> {
     // Bottom description
     private final Label playDescriptionLabel = new Label();
 
-    private final Font font = Font.font(16);
+    private final Font font = Font.font("Syste", FontWeight.NORMAL, 16);
     private final HashMap<String, String> teams;
     private final User user;
     private final double listWidth = listViewWidth - 36;
+    private final DecimalFormat df = new DecimalFormat("0.00");
 
     public PlayCell(HashMap<String, String> teams, User user) {
         super();
@@ -144,26 +144,43 @@ public class PlayCell extends ListCell<Play> {
             playerImage.setSmooth(true);
 
             // Data descriptor block
-            Label playerDetailsLabel = new Label(MessageFormat.format("{0}\n{1} - {2}",
-                    player.getPlayerName(), teams.get(player.getTeamId()), player.getPosition()));
-            setDefaults(playerDetailsLabel);
+            Text playerNameText = new Text(player.getPlayerName());
+            setDefaults(playerNameText);
+            playerNameText.setStyle("-fx-font-weight: bold;");
+            Text teamPosText = new Text(MessageFormat.format("{0} - {1}", teams.get(player.getTeamId()), player.getPosition()));
+            setDefaults(teamPosText);
+            TextFlow playerDetailsText = new TextFlow(playerNameText, new Text("\n"), teamPosText);
 
-            // Scoring change labels (Push score tracking values rightward safely)
             Region middleSpacer = new Region();
             HBox.setHgrow(middleSpacer, Priority.ALWAYS);
 
-            Label playPointLabel = new Label(
-                    MessageFormat.format("{0}{1}\nPTS", participant.getScoreChange() >= 0 ? "+" : "", participant.getScoreChange())
+            // Scoring change labels (Push score tracking values rightward safely)
+            Text pointsChangeText = new Text(
+                    MessageFormat.format("{0}{1}", participant.getScoreChange() >= 0 ? "+" : "", df.format(participant.getScoreChange()))
             );
-            setDefaults(playPointLabel);
-            playPointLabel.setTextAlignment(TextAlignment.CENTER);
+            setDefaults(pointsChangeText);
+            if(participant.getScoreChange() > 0)
+                pointsChangeText.setFill(Color.GREEN);
+            else if(participant.getScoreChange() < 0)
+                pointsChangeText.setFill(Color.RED);
+            else
+                pointsChangeText.setFill(Color.BLACK);
+            pointsChangeText.setStyle("-fx-font-weight: bold;");
+            Text ptsText = new Text("PTS");
+            setDefaults(ptsText);
+            TextFlow playPointsText = new TextFlow(pointsChangeText, new Text("\n"), ptsText);
+            playPointsText.setTextAlignment(TextAlignment.CENTER);
 
-            Label totalLabel = new Label(player.getScore() + "\nTOTAL");
-            setDefaults(totalLabel);
-            totalLabel.setTextAlignment(TextAlignment.CENTER);
+            Text scoreText = new Text(String.valueOf(df.format(player.getScore())));
+            setDefaults(scoreText);
+            scoreText.setStyle("-fx-font-weight: bold;");
+            Text totalText = new Text("TOTAL");
+            setDefaults(totalText);
+            TextFlow totalScoreText = new TextFlow(scoreText, new Text("\n"), totalText);
+            totalScoreText.setTextAlignment(TextAlignment.CENTER);
 
             // Build layout structure
-            playerRow.getChildren().addAll(playerImage, playerDetailsLabel, middleSpacer, playPointLabel, totalLabel);
+            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, playPointsText, totalScoreText);
             participantPane.getChildren().add(playerRow);
         });
     }
@@ -172,5 +189,10 @@ public class PlayCell extends ListCell<Play> {
         label.setFont(font);
         label.setPrefHeight(Region.USE_COMPUTED_SIZE);
         label.setPrefWidth(Region.USE_COMPUTED_SIZE);
+    }
+    private void setDefaults(Text text){
+        text.setFont(font);
+        text.prefHeight(Region.USE_COMPUTED_SIZE);
+        text.prefWidth(Region.USE_COMPUTED_SIZE);
     }
 }

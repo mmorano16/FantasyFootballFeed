@@ -41,15 +41,15 @@ public class FeedController {
         l.setLayoutY(100);
         button.setOnAction(Event ->{
             Play play = new Play();
-            items.add(getPlay(1));
-            items.add(getPlay(1));
-            items.add(getPlay(1));
-            items.add(getPlay(2));
-            items.add(getPlay(2));
-            items.add(getPlay(2));
-            items.add(getPlay(3));
-            items.add(getPlay(3));
-            items.add(getPlay(3));
+            items.add(getPlay(1, 1));
+            items.add(getPlay(1, 3.24));
+            items.add(getPlay(1, -2.4));
+            items.add(getPlay(2, .24));
+            items.add(getPlay(2, 0));
+            items.add(getPlay(2, 1));
+            items.add(getPlay(3, -3.4));
+            items.add(getPlay(3, 2.22));
+            items.add(getPlay(3, -.12));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, user));
             listFeed.setItems(items);
             l.setText(String.valueOf(items.size()));
@@ -60,7 +60,7 @@ public class FeedController {
         listFeed.setFocusTraversable(false);
     }
 
-    private Play getPlay(int num){
+    private Play getPlay(int num, double points){
         Play play = new Play();
         PlayType playType = new PlayType();
         playType.setText("PASS PLAY");
@@ -82,7 +82,7 @@ public class FeedController {
         player.setTeamId("2");
         player.setPlayerImage("https://a.espncdn.com/i/headshots/nfl/players/full/3918298.png");
         participant.setPlayer(player);
-        participant.setScoreChange(2.20);
+        participant.setScoreChange(points);
         participant.setTotalScore(13.48);
         for(int i = 0; i < num; i++) {
             play.getParticipants().put(String.valueOf(i), participant);
