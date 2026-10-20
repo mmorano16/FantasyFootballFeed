@@ -7,6 +7,11 @@ import com.mmorano.fantasyfootballfeed.PlayFeed.Participant;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayCell;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayType;
+import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
+import com.mmorano.fantasyfootballfeed.Workers.FeedWorker;
+import com.sun.jdi.ThreadReference;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class FeedController {
@@ -31,30 +35,41 @@ public class FeedController {
     private HashSet<String> sleeperIds = new HashSet<>();
     private User user;
     private DataInitializer initializer;
+    Thread runner;
 
 
-    public void initData(User user, DataInitializer initializer){
+    public void initData(DataInitializer initializer){
         this.initializer = initializer;
-        this.user = user;
         Button button = new Button("TEST");
-        Label l = new Label(String.valueOf(items.size()));
-        l.setLayoutY(100);
         button.setOnAction(Event ->{
-            Play play = new Play();
-            items.add(getPlay(1, 1));
-            items.add(getPlay(1, 3.24));
-            items.add(getPlay(1, -2.4));
-            items.add(getPlay(2, .24));
-            items.add(getPlay(2, 0));
-            items.add(getPlay(2, 1));
-            items.add(getPlay(3, -3.4));
-            items.add(getPlay(3, 2.22));
-            items.add(getPlay(3, -.12));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, user));
             listFeed.setItems(items);
-            l.setText(String.valueOf(items.size()));
         });
+        Button button2 = new Button("Worker Test");
+        button2.setLayoutX(200);
+        Label l1 = new Label("TEST");
+        l1.setLayoutY(300);
+        button2.setOnAction(Event -> {
+            FeedWorker fw = new FeedWorker();
+            //l1.textProperty().bind(fw.messageProperty());
+            ChangeListener<String> cl = (observableValue, s, t1) -> l1.setText(t1.toString());
+            fw.messageProperty().addListener(cl);
+            runner = new Thread(fw);
+            runner.start();
+        });
+
+        items.add(getPlay(1, 1));
+        items.add(getPlay(1, 3.24));
+        items.add(getPlay(1, -2.4));
+        items.add(getPlay(2, .24));
+        items.add(getPlay(2, 0));
+        items.add(getPlay(2, 1));
+        items.add(getPlay(3, -3.4));
+        items.add(getPlay(3, 2.22));
+        items.add(getPlay(3, -.12));
         paneFeedSettings.getChildren().add(button);
+        paneFeedSettings.getChildren().add(button2);
+        paneFeedSettings.getChildren().add(l1);
 
         //listFeed.setMouseTransparent(true);
         listFeed.setFocusTraversable(false);

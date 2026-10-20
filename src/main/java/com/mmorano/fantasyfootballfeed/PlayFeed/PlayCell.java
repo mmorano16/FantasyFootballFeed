@@ -4,8 +4,10 @@ import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -14,9 +16,11 @@ import javafx.scene.text.*;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import static com.mmorano.fantasyfootballfeed.UserEntryController.listViewWidth;
+import static com.mmorano.fantasyfootballfeed.Application.listViewWidth;
 
 public class PlayCell extends ListCell<Play> {
     // Top structural container
@@ -158,6 +162,18 @@ public class PlayCell extends ListCell<Play> {
             setDefaults(teamPosText);
             TextFlow playerDetailsText = new TextFlow(playerNameText, new Text("\n"), teamPosText);
 
+            VBox leagueOwnership = new VBox(1);
+            leagueOwnership.setAlignment(Pos.CENTER_LEFT);
+            //TODO - REMOVE TEMP LIST
+            ArrayList<String> tempList = new ArrayList<>(List.of("Shotgun", "Punishment", "Dynasty", "Dynasty"));
+            for(int i = 0; i < tempList.size(); i++){
+                Text t = new Text(tempList.get(i));
+                setDefaults(t);
+                t.setFont(Font.font("System", FontWeight.NORMAL, 8));
+                t.setFill(i % 2 == 1 ? Color.RED : Color.GREEN);
+                leagueOwnership.getChildren().add(t);
+            }
+
             Region middleSpacer = new Region();
             HBox.setHgrow(middleSpacer, Priority.ALWAYS);
 
@@ -187,7 +203,7 @@ public class PlayCell extends ListCell<Play> {
             totalScoreText.setTextAlignment(TextAlignment.CENTER);
 
             // Build layout structure
-            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, playPointsText, totalScoreText);
+            playerRow.getChildren().addAll(playerImage, playerDetailsText, leagueOwnership, middleSpacer, playPointsText, totalScoreText);
             participantPane.getChildren().add(playerRow);
         });
     }
