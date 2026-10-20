@@ -194,7 +194,7 @@ public class PlayCell extends ListCell<Play> {
             TextFlow playPointsText = new TextFlow(pointsChangeText, new Text("\n"), ptsText);
             playPointsText.setTextAlignment(TextAlignment.CENTER);
 
-            Text scoreText = new Text(String.valueOf(df.format(player.getScore())));
+            Text scoreText = new Text(String.valueOf(df.format(participant.getTotalScore())));
             setDefaults(scoreText);
             scoreText.setStyle("-fx-font-weight: bold;");
             Text totalText = new Text("TOTAL");
@@ -203,7 +203,7 @@ public class PlayCell extends ListCell<Play> {
             totalScoreText.setTextAlignment(TextAlignment.CENTER);
 
             // Build layout structure
-            playerRow.getChildren().addAll(playerImage, playerDetailsText, leagueOwnership, middleSpacer, playPointsText, totalScoreText);
+            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, leagueOwnership, playPointsText, totalScoreText);
             participantPane.getChildren().add(playerRow);
         });
     }

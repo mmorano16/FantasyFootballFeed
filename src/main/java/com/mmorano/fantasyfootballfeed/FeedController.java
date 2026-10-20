@@ -1,5 +1,6 @@
 package com.mmorano.fantasyfootballfeed;
 
+import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
@@ -40,74 +41,31 @@ public class FeedController {
 
     public void initData(DataInitializer initializer){
         this.initializer = initializer;
-        Button button = new Button("TEST");
-        button.setOnAction(Event ->{
+        Button button2 = new Button("Load Plays");
+        button2.setLayoutX(200);
+        Label l1 = new Label("TEST");
+        l1.setLayoutX(50);
+        l1.setLayoutY(300);
+        FeedWorker fw = new FeedWorker(initializer);
+        button2.setOnAction(Event -> {
+            EspnDataFetcher dataFetcher = new EspnDataFetcher();
+            items.addAll(dataFetcher.getPlays(initializer, null));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, user));
             listFeed.setItems(items);
         });
-        Button button2 = new Button("Worker Test");
-        button2.setLayoutX(200);
-        Label l1 = new Label("TEST");
-        l1.setLayoutY(300);
-        button2.setOnAction(Event -> {
-            FeedWorker fw = new FeedWorker();
-            //l1.textProperty().bind(fw.messageProperty());
-            ChangeListener<String> cl = (observableValue, s, t1) -> l1.setText(t1.toString());
-            fw.messageProperty().addListener(cl);
-            runner = new Thread(fw);
-            runner.start();
-        });
+//        button2.setOnAction(Event -> {
+//            //l1.textProperty().bind(fw.messageProperty());
+//            ChangeListener<String> cl = (observableValue, s, t1) -> l1.setText(t1.toString());
+//            fw.messageProperty().addListener(cl);
+//            runner = new Thread(fw);
+//            runner.start();
+//        });
 
-        items.add(getPlay(1, 1));
-        items.add(getPlay(1, 3.24));
-        items.add(getPlay(1, -2.4));
-        items.add(getPlay(2, .24));
-        items.add(getPlay(2, 0));
-        items.add(getPlay(2, 1));
-        items.add(getPlay(3, -3.4));
-        items.add(getPlay(3, 2.22));
-        items.add(getPlay(3, -.12));
-        paneFeedSettings.getChildren().add(button);
         paneFeedSettings.getChildren().add(button2);
         paneFeedSettings.getChildren().add(l1);
 
         //listFeed.setMouseTransparent(true);
         listFeed.setFocusTraversable(false);
-    }
-
-    private Play getPlay(int num, double points){
-        Play play = new Play();
-        PlayType playType = new PlayType();
-        playType.setText("PASS PLAY");
-        playType.setAbbrev("INTR");
-        play.setPlayType(playType);
-        play.setPeriod(1);
-        play.setClockTime("10:45");
-        play.setHomeAbbrev("BUF");
-        play.setHomeScore(7);
-        play.setAwayAbbrev("NE");
-        play.setAwayScore(0);
-        play.setText("(Shotgun) D.Maye pass incomplete short right.PENALTY on NE-A.Vera-Tucker, Ineligible Downfield Pass, 5 yards, enforced at SEA 48 - No Play. " +
-                "AAAAAAAAAAAAAAAAAAAAAAaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        play.setDownDistanceText("1st & 10 at SEA 48");
-        Participant participant = new Participant();
-        Player player = new Player();
-        player.setPlayerName("Josh Allen");
-        player.setPosition("QB");
-        player.setScore(13.48);
-        player.setTeamId("2");
-        player.setPlayerImage("https://a.espncdn.com/i/headshots/nfl/players/full/3918298.png");
-        participant.setPlayer(player);
-        participant.setScoreChange(points);
-        participant.setTotalScore(13.48);
-        if(points == 1)
-            play.setTurnover(true);
-        if(points == 0)
-            play.setScoringPlay(true);
-        for(int i = 0; i < num; i++) {
-            play.getParticipants().put(String.valueOf(i), participant);
-        }
-        return play;
     }
 }
 

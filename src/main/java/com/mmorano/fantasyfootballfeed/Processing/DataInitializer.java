@@ -5,6 +5,7 @@ import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
+import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -24,15 +25,15 @@ public class DataInitializer {
     public HashMap<String, Player> espnPlayers = new HashMap<>();
     public HashMap<String, Player> sleeperPlayers = new HashMap<>();
     private ArrayList<League> leagues = new ArrayList<>();
-    private ArrayList<String> eventIds = new ArrayList<>();
     public SaveData saveData;
     public User user = new User();
-    //private HashMap<String, Event> events = new HashMap<>();
+    public HashMap<String, Event> events = new HashMap<>();
     private final File playersFile = new File("players.ser");
     private final File saveFile = new File("save.ser");
 
     public void initializeData(){
         teams = espnDataFetcher.getTeamData();
+        events = espnDataFetcher.getEvents(teams);
 
         if(!playersFile.exists() || fileNeedsUpdate()){
             updateAllPlayers();
