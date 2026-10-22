@@ -3,6 +3,7 @@ package com.mmorano.fantasyfootballfeed;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
+import com.mmorano.fantasyfootballfeed.Processing.DataSaver;
 import com.mmorano.fantasyfootballfeed.Processing.SaveData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -101,13 +102,9 @@ public class UserEntryController implements Initializable {
     }
 
     private void saveData(){
+        DataSaver dataSaver = new DataSaver();
         SaveData saveData = new SaveData();
         saveData.setSleeperId(sleeperId);
-        try (FileOutputStream fileOut = new FileOutputStream("save.ser");
-             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
-            out.writeObject(saveData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dataSaver.trySaveUser(saveData);
     }
 }

@@ -9,6 +9,7 @@ import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ public class DataInitializer {
     public SaveData saveData;
     public User user = new User();
     public HashMap<String, Event> events = new HashMap<>();
+    private DataSaver dataSaver = new DataSaver();
     private final File playersFile = new File("players.ser");
     private final File saveFile = new File("save.ser");
 
@@ -35,11 +37,13 @@ public class DataInitializer {
         teams = espnDataFetcher.getTeamData();
         events = espnDataFetcher.getEvents(teams);
 
-        if(!playersFile.exists() || fileNeedsUpdate()){
+        //if(  !playersFile.exists() || fileNeedsUpdate()){
+        if(!Files.exists(dataSaver.playersPath) || fileNeedsUpdate()){
             updateAllPlayers();
-            updatePlayersFile();
+            dataSaver.trySavePlayers(allPlayers);
+            //updatePlayersFile();
         } else {
-            allPlayers = loadPlayers();
+            allPlayers = dataSaver.loadPlayers(); //loadPlayers();
         }
 
         //set maps of players for each source as key
@@ -49,8 +53,9 @@ public class DataInitializer {
             sleeperPlayers.put(player.getSleeperId(), player);
         }
 
-        if(saveFile.exists()){
-            loadSaveData();
+        if(Files.exists(dataSaver.savePath)){
+            saveData = dataSaver.loadUser();
+            //loadSaveData();
             user.setLeagues(sleeperDataFetcher.getLeagueData(saveData.getSleeperId(), sleeperPlayers));
         }
     }
@@ -68,7 +73,7 @@ public class DataInitializer {
     private boolean fileNeedsUpdate(){
         boolean result = false;
         try {
-            FileTime fileTime = Files.getLastModifiedTime(playersFile.toPath());
+            FileTime fileTime = Files.getLastModifiedTime(dataSaver.playersPath);
             LocalDate lastModifiedDate = fileTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             result = lastModifiedDate.isBefore(LocalDate.now());
         } catch (IOException e) {
