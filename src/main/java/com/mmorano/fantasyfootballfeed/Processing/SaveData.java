@@ -3,7 +3,7 @@ package com.mmorano.fantasyfootballfeed.Processing;
 import java.io.Serializable;
 
 public class SaveData implements Serializable {
-    String sleeperId;
+    private String sleeperId;
 
     public String getSleeperId() {
         return sleeperId;

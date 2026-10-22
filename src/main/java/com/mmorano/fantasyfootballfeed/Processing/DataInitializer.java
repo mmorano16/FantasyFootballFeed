@@ -56,6 +56,7 @@ public class DataInitializer {
         if(Files.exists(dataSaver.savePath)){
             saveData = dataSaver.loadUser();
             //loadSaveData();
+            user.setSleeperId(saveData.getSleeperId());
             user.setLeagues(sleeperDataFetcher.getLeagueData(saveData.getSleeperId(), sleeperPlayers));
         }
     }

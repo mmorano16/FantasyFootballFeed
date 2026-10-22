@@ -35,7 +35,6 @@ public class FeedController {
 
     private SleeperDataFetcher sleeperDataFetcher;
     private HashSet<String> sleeperIds = new HashSet<>();
-    private User user;
     private DataInitializer initializer;
     Thread runner;
 
@@ -55,7 +54,7 @@ public class FeedController {
             options.setMyPlayers(true);
             options.setOpponentPlayers(true);
             items.addAll(dataFetcher.getPlays(initializer, options));
-            listFeed.setCellFactory(param -> new PlayCell(initializer.teams, user));
+            listFeed.setCellFactory(param -> new PlayCell(initializer.teams, initializer.user));
             listFeed.setItems(items);
         });
 //        button2.setOnAction(Event -> {
@@ -72,5 +71,40 @@ public class FeedController {
         //listFeed.setMouseTransparent(true);
         listFeed.setFocusTraversable(false);
     }
+
+//    private Play getPlay(int num, double points){
+//        Play play = new Play();
+//        PlayType playType = new PlayType();
+//        playType.setText("PASS PLAY");
+//        playType.setAbbrev("INTR");
+//        play.setPlayType(playType);
+//        play.setPeriod(1);
+//        play.setClockTime("10:45");
+//        play.setHomeAbbrev("BUF");
+//        play.setHomeScore(7);
+//        play.setAwayAbbrev("NE");
+//        play.setAwayScore(0);
+//        play.setText("(Shotgun) D.Maye pass incomplete short right.PENALTY on NE-A.Vera-Tucker, Ineligible Downfield Pass, 5 yards, enforced at SEA 48 - No Play. " +
+//                "AAAAAAAAAAAAAAAAAAAAAAaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//        play.setDownDistanceText("1st & 10 at SEA 48");
+//        Participant participant = new Participant();
+//        Player player = new Player();
+//        player.setPlayerName("Josh Allen");
+//        player.setPosition("QB");
+//        player.setScore(13.48);
+//        player.setTeamId("2");
+//        player.setPlayerImage("https://a.espncdn.com/i/headshots/nfl/players/full/3918298.png");
+//        participant.setPlayer(player);
+//        participant.setScoreChange(points);
+//        participant.setTotalScore(13.48);
+//        if(points == 1)
+//            play.setTurnover(true);
+//        if(points == 0)
+//            play.setScoringPlay(true);
+//        for(int i = 0; i < num; i++) {
+//            play.getParticipants().put(String.valueOf(i), participant);
+//        }
+//        return play;
+//    }
 }
 

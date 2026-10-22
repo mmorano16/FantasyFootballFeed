@@ -48,7 +48,7 @@ public class UserEntryController implements Initializable {
         ddFantasyApp.getItems().addAll("Sleeper");
         ddFantasyApp.setValue("Sleeper");
         btnContinueToFeed.setDisable(true);
-        inputUsername.setText("mmorano16");
+        //inputUsername.setText("mmorano16");
     }
 
     @FXML
@@ -63,7 +63,7 @@ public class UserEntryController implements Initializable {
 
         saveData();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fantasy-feed.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(Application.feedFxmlFile));
 
         Parent root = loader.load();
         FeedController feedController = loader.getController();

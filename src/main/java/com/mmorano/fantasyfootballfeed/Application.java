@@ -4,12 +4,14 @@ import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -17,6 +19,7 @@ import java.io.IOException;
 
 public class Application extends javafx.application.Application {
     public static double listViewWidth;
+    public static String feedFxmlFile;
     @Override
     public void start(Stage stage) throws IOException {
         DataInitializer initializer = new DataInitializer();
@@ -61,6 +64,13 @@ public class Application extends javafx.application.Application {
     private void showMainStage(DataInitializer initializer) throws IOException {
         Stage stage = new Stage();
 
+        Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+        double usableWidth = visualBounds.getWidth();
+        feedFxmlFile = switch ((int) usableWidth) {
+            case 1440, 1400 -> "fantasy-feed-1440x900.fxml";
+            default -> "fantasy-feed-1920x1080.fxml";
+        };//default to 1920x1080
+
         FXMLLoader fxmlLoader;
         Scene scene;
         FeedController feedController = null;
@@ -72,7 +82,7 @@ public class Application extends javafx.application.Application {
             entryController.setDataInitializer(initializer);
         }
         else {
-            fxmlLoader = new FXMLLoader(Application.class.getResource("fantasy-feed.fxml"));
+            fxmlLoader = new FXMLLoader(Application.class.getResource(feedFxmlFile));
             Parent root = fxmlLoader.load();
             scene = new Scene(root);
             feedController = fxmlLoader.getController();

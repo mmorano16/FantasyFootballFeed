@@ -1,5 +1,6 @@
 package com.mmorano.fantasyfootballfeed.PlayFeed;
 
+import com.mmorano.fantasyfootballfeed.Application;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
@@ -44,11 +45,17 @@ public class PlayCell extends ListCell<Play> {
     private final Font font = Font.font("System", FontWeight.NORMAL, 16);
     private final HashMap<String, String> teams;
     private final User user;
-    private final double listWidth = listViewWidth - 36;
+    private final double listWidth = listViewWidth - getOffset();// 36;
     private final DecimalFormat df = new DecimalFormat("0.00");
     private HashMap<String, HashSet<String>> myPlayers = new HashMap<>();//<PlayerID, LeagueName>
     private HashMap<String, HashSet<String>> oppPlayers = new HashMap<>();//<PlayerID, LeagueName>
 
+    private double getOffset(){
+        return switch (Application.feedFxmlFile.substring(Application.feedFxmlFile.lastIndexOf("-") + 1)) {
+            case "1440x900.fxml" -> 61;
+            default -> 36;
+        };
+    }
     public PlayCell(HashMap<String, String> teams, User user) {
         super();
         this.teams = teams;
