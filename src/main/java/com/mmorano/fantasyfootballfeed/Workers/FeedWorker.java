@@ -1,6 +1,7 @@
 package com.mmorano.fantasyfootballfeed.Workers;
 
 import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
+import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayCell;
 import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
@@ -20,7 +21,10 @@ public class FeedWorker extends Task<ArrayList<Play>> {
     protected ArrayList<Play> call() {
         updateMessage("Fetching Data...");
         EspnDataFetcher dataFetcher = new EspnDataFetcher();
-        ArrayList<Play> plays = dataFetcher.getPlays(initializer, null);
+        FilterOptions options = new FilterOptions();
+        options.setMyPlayers(true);
+        options.setOpponentPlayers(true);
+        ArrayList<Play> plays = dataFetcher.getPlays(initializer, options);
         updateMessage("Received " + plays.size() + " Plays");
         plays.sort(Comparator.comparing(Play::getIdInt).reversed());
         if(plays.size() > 50)

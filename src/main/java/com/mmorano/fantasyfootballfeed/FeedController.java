@@ -2,6 +2,7 @@ package com.mmorano.fantasyfootballfeed;
 
 import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
+import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Participant;
@@ -49,7 +50,11 @@ public class FeedController {
         FeedWorker fw = new FeedWorker(initializer);
         button2.setOnAction(Event -> {
             EspnDataFetcher dataFetcher = new EspnDataFetcher();
-            items.addAll(dataFetcher.getPlays(initializer, null));
+            items.clear();
+            FilterOptions options = new FilterOptions();
+            options.setMyPlayers(true);
+            options.setOpponentPlayers(true);
+            items.addAll(dataFetcher.getPlays(initializer, options));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, user));
             listFeed.setItems(items);
         });

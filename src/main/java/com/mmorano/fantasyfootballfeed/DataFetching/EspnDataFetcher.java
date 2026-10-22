@@ -13,10 +13,7 @@ import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
 import com.mmorano.fantasyfootballfeed.Processing.PlayerScoreUpdater;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public class EspnDataFetcher extends DataFetcher {
 
@@ -58,7 +55,7 @@ public class EspnDataFetcher extends DataFetcher {
     }
 
     public ArrayList<Play> getPlays(DataInitializer initializer, FilterOptions filterOptions){
-        playParser = new PlayParser(initializer.teams, initializer.events, initializer.espnPlayers);
+        playParser = new PlayParser(initializer, filterOptions);
         scoreUpdater.clearPlayerScores(initializer.espnPlayers);
         ArrayList<Play> plays = new ArrayList<>();
         HashMap<String, String> urls = new HashMap<>();

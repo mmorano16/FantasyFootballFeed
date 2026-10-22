@@ -7,8 +7,10 @@ import com.google.gson.JsonParser;
 import com.mmorano.fantasyfootballfeed.DataParsing.DataParser;
 import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
+import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
 import com.mmorano.fantasyfootballfeed.Processing.PlayerScoreUpdater;
 
 import java.time.LocalDateTime;
@@ -27,11 +29,21 @@ public class PlayParser extends DataParser {
             "End of Game", "Timeout", "Two-minute warning", "Official Timeout", "Kickoff", "End Period", "End of Half", "Punt", "Coin Toss", "Muffed Punt Recovery", "Blocked Punt"
     ));
     private HashMap<String, Player> players;
-    public PlayParser(HashMap<String, String> teams, HashMap<String, Event> events, HashMap<String, Player> players){
-        this.teams = teams;
-        this.events = events;
+    public PlayParser(DataInitializer initializer, FilterOptions filterOptions){
+        teams = initializer.teams;
+        events = initializer.events;
+        players = new HashMap<>();
+        if(filterOptions.allPlayers()){
+            players.putAll(initializer.espnPlayers);
+        } else {
+            for(League league : initializer.user.getLeagues()) {
+                if (filterOptions.myPlayers())
+                    players.putAll(league.getPlayerMap());
+                if (filterOptions.opponentPlayers())
+                    players.putAll(league.getMatchup().getPlayerMap());
+            }
+        }
         participantParser = new ParticipantParser(players);
-        this.players = players;
         scoreUpdater = new PlayerScoreUpdater(FilterOptions.Scoring.PPR);
     }
 

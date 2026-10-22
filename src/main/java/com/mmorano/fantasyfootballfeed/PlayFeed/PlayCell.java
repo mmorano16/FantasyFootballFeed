@@ -1,6 +1,7 @@
 package com.mmorano.fantasyfootballfeed.PlayFeed;
 
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.mmorano.fantasyfootballfeed.Application.listViewWidth;
@@ -44,11 +46,27 @@ public class PlayCell extends ListCell<Play> {
     private final User user;
     private final double listWidth = listViewWidth - 36;
     private final DecimalFormat df = new DecimalFormat("0.00");
+    private HashMap<String, HashSet<String>> myPlayers = new HashMap<>();//<PlayerID, LeagueName>
+    private HashMap<String, HashSet<String>> oppPlayers = new HashMap<>();//<PlayerID, LeagueName>
 
     public PlayCell(HashMap<String, String> teams, User user) {
         super();
         this.teams = teams;
         this.user = user;
+        for(League league : user.getLeagues()){
+            for(String id : league.getPlayerMap().keySet()){
+                if(myPlayers.containsKey(id))
+                    myPlayers.get(id).add(league.getLeagueName());
+                else
+                    myPlayers.put(id, new HashSet<>(List.of(league.getLeagueName())));
+            }
+            for(String id : league.getMatchup().getPlayerMap().keySet()){
+                if(oppPlayers.containsKey(id))
+                    oppPlayers.get(id).add(league.getLeagueName());
+                else
+                    oppPlayers.put(id, new HashSet<>(List.of(league.getLeagueName())));
+            }
+        }
 
         // Configure header row layouts (Push score to the far right using a Spacer)
         Region spacer = new Region();
@@ -164,14 +182,26 @@ public class PlayCell extends ListCell<Play> {
 
             VBox leagueOwnership = new VBox(1);
             leagueOwnership.setAlignment(Pos.CENTER_LEFT);
-            //TODO - REMOVE TEMP LIST
-            ArrayList<String> tempList = new ArrayList<>(List.of("Shotgun", "Punishment", "Dynasty", "Dynasty"));
-            for(int i = 0; i < tempList.size(); i++){
-                Text t = new Text(tempList.get(i));
-                setDefaults(t);
-                t.setFont(Font.font("System", FontWeight.NORMAL, 8));
-                t.setFill(i % 2 == 1 ? Color.RED : Color.GREEN);
-                leagueOwnership.getChildren().add(t);
+
+            if(myPlayers.containsKey(participant.getPlayer().getEspnId())){
+                for(String leagueName : myPlayers.get(participant.getPlayer().getEspnId()))
+                {
+                    Text t = new Text(leagueName);
+                    setDefaults(t);
+                    t.setFont(Font.font("System", FontWeight.NORMAL, 8));
+                    t.setFill(Color.GREEN);
+                    leagueOwnership.getChildren().add(t);
+                }
+            }
+            if(oppPlayers.containsKey(participant.getPlayer().getEspnId())){
+                for(String leagueName : oppPlayers.get(participant.getPlayer().getEspnId()))
+                {
+                    Text t = new Text(leagueName);
+                    setDefaults(t);
+                    t.setFont(Font.font("System", FontWeight.NORMAL, 8));
+                    t.setFill(Color.GREEN);
+                    leagueOwnership.getChildren().add(t);
+                }
             }
 
             Region middleSpacer = new Region();
