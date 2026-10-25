@@ -1,9 +1,10 @@
 package com.mmorano.fantasyfootballfeed;
 
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
-import com.mmorano.fantasyfootballfeed.Fantasy.Player;
-import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
+import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
+import com.mmorano.fantasyfootballfeed.Processing.DataSaver;
+import com.mmorano.fantasyfootballfeed.Processing.SaveData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,15 +13,15 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class UserEntryController implements Initializable {
@@ -35,18 +36,19 @@ public class UserEntryController implements Initializable {
 
     private DataInitializer initializer = new DataInitializer();
     private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
-    private User user;
+    private String sleeperId;
 
-    public static double listViewWidth;
+
+    public void setDataInitializer(DataInitializer initializer){
+        this.initializer = initializer;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ddFantasyApp.getItems().addAll("Sleeper");
         ddFantasyApp.setValue("Sleeper");
-        initializer.initializeData();
-        user = new User();
         btnContinueToFeed.setDisable(true);
-        inputUsername.setText("mmorano16");
+        //inputUsername.setText("mmorano16");
     }
 
     @FXML
@@ -54,24 +56,28 @@ public class UserEntryController implements Initializable {
         btnAddAccount.setDisable(true);
         btnContinueToFeed.setDisable(true);
 
-        user.setLeagues(sleeperDataFetcher.getLeagueData(user.getSleeperId(), initializer.sleeperPlayers));
+        //user.setLeagues(sleeperDataFetcher.getLeagueData(user.getSleeperId(), initializer.sleeperPlayers));
+        initializer.updateUser(sleeperId);
 
-        System.out.println(user.getLeagues());
+        System.out.println(initializer.user.getLeagues());
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fantasy-feed.fxml"));
+        saveData();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(Application.feedFxmlFile));
 
         Parent root = loader.load();
         FeedController feedController = loader.getController();
-        feedController.initData(user, initializer);
+        feedController.initData(initializer);
         Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        listViewWidth = feedController.listFeed.getPrefWidth();
+        Application.listViewWidth = feedController.listFeed.getPrefWidth();
     }
 
     @FXML
     protected void onAddAccountButtonClicked(ActionEvent event) {
+        btnAddAccount.setDisable(true);
         if(ddFantasyApp.getValue() == null){
             txtSearchResponse.setText("Select Fantasy App");
             txtSearchResponse.setFill(Color.RED);
@@ -85,11 +91,20 @@ public class UserEntryController implements Initializable {
                 txtSearchResponse.setText("Unable to retrieve account data.\nEnsure Username is entered correctly.");
                 txtSearchResponse.setFill(Color.RED);
             } else {
-                user.setSleeperId(ownerId);
+                sleeperId = ownerId;
                 txtSearchResponse.setText(MessageFormat.format("{0} account added.", ddFantasyApp.getValue().toString()));
                 txtSearchResponse.setFill(Color.BLACK);
                 btnContinueToFeed.setDisable(false);
+                inputUsername.setText("");
+                ddFantasyApp.setValue("");
             }
         }
+    }
+
+    private void saveData(){
+        DataSaver dataSaver = new DataSaver();
+        SaveData saveData = new SaveData();
+        saveData.setSleeperId(sleeperId);
+        dataSaver.trySaveUser(saveData);
     }
 }

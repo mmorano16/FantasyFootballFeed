@@ -1,14 +1,11 @@
-package com.mmorano.fantasyfootballfeed;
+package com.mmorano.fantasyfootballfeed.Processing;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
-import com.mmorano.fantasyfootballfeed.DataParsing.LeagueParser;
-import com.mmorano.fantasyfootballfeed.DataParsing.PlayerParser;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
+import com.mmorano.fantasyfootballfeed.Fantasy.User;
+import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,7 +15,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DataInitializer {
 
@@ -30,18 +26,24 @@ public class DataInitializer {
     public HashMap<String, Player> espnPlayers = new HashMap<>();
     public HashMap<String, Player> sleeperPlayers = new HashMap<>();
     private ArrayList<League> leagues = new ArrayList<>();
-    private ArrayList<String> eventIds = new ArrayList<>();
-    //private HashMap<String, Event> events = new HashMap<>();
+    public SaveData saveData;
+    public User user = new User();
+    public HashMap<String, Event> events = new HashMap<>();
+    private DataSaver dataSaver = new DataSaver();
     private final File playersFile = new File("players.ser");
+    private final File saveFile = new File("save.ser");
 
     public void initializeData(){
         teams = espnDataFetcher.getTeamData();
+        events = espnDataFetcher.getEvents(teams);
 
-        if(!playersFile.exists() || fileNeedsUpdate()){
+        //if(  !playersFile.exists() || fileNeedsUpdate()){
+        if(!Files.exists(dataSaver.playersPath) || fileNeedsUpdate()){
             updateAllPlayers();
-            updatePlayersFile();
+            dataSaver.trySavePlayers(allPlayers);
+            //updatePlayersFile();
         } else {
-            allPlayers = loadPlayers();
+            allPlayers = dataSaver.loadPlayers(); //loadPlayers();
         }
 
         //set maps of players for each source as key
@@ -50,6 +52,17 @@ public class DataInitializer {
                 espnPlayers.put(player.getEspnId(), player);
             sleeperPlayers.put(player.getSleeperId(), player);
         }
+
+        if(Files.exists(dataSaver.savePath)){
+            saveData = dataSaver.loadUser();
+            //loadSaveData();
+            user.setSleeperId(saveData.getSleeperId());
+            user.setLeagues(sleeperDataFetcher.getLeagueData(saveData.getSleeperId(), sleeperPlayers));
+        }
+    }
+
+    public void updateUser(String sleeperId){
+        user.setLeagues(sleeperDataFetcher.getLeagueData(sleeperId, sleeperPlayers));
     }
 
     private void updateAllPlayers(){
@@ -61,7 +74,7 @@ public class DataInitializer {
     private boolean fileNeedsUpdate(){
         boolean result = false;
         try {
-            FileTime fileTime = Files.getLastModifiedTime(playersFile.toPath());
+            FileTime fileTime = Files.getLastModifiedTime(dataSaver.playersPath);
             LocalDate lastModifiedDate = fileTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             result = lastModifiedDate.isBefore(LocalDate.now());
         } catch (IOException e) {
@@ -88,6 +101,15 @@ public class DataInitializer {
             e.printStackTrace();
         }
         return players;
+    }
+
+    private void loadSaveData(){
+        try(FileInputStream fileIn = new FileInputStream("save.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn)){
+            saveData = (SaveData) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }

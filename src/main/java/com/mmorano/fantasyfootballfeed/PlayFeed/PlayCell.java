@@ -1,11 +1,15 @@
 package com.mmorano.fantasyfootballfeed.PlayFeed;
 
+import com.mmorano.fantasyfootballfeed.Application;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -14,9 +18,12 @@ import javafx.scene.text.*;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
-import static com.mmorano.fantasyfootballfeed.UserEntryController.listViewWidth;
+import static com.mmorano.fantasyfootballfeed.Application.listViewWidth;
 
 public class PlayCell extends ListCell<Play> {
     // Top structural container
@@ -38,13 +45,35 @@ public class PlayCell extends ListCell<Play> {
     private final Font font = Font.font("System", FontWeight.NORMAL, 16);
     private final HashMap<String, String> teams;
     private final User user;
-    private final double listWidth = listViewWidth - 36;
+    private final double listWidth = listViewWidth - getOffset();// 36;
     private final DecimalFormat df = new DecimalFormat("0.00");
+    private HashMap<String, HashSet<String>> myPlayers = new HashMap<>();//<PlayerID, LeagueName>
+    private HashMap<String, HashSet<String>> oppPlayers = new HashMap<>();//<PlayerID, LeagueName>
 
+    private double getOffset(){
+        return switch (Application.feedFxmlFile.substring(Application.feedFxmlFile.lastIndexOf("-") + 1)) {
+            case "1440x900.fxml" -> 61;
+            default -> 36;
+        };
+    }
     public PlayCell(HashMap<String, String> teams, User user) {
         super();
         this.teams = teams;
         this.user = user;
+        for(League league : user.getLeagues()){
+            for(String id : league.getPlayerMap().keySet()){
+                if(myPlayers.containsKey(id))
+                    myPlayers.get(id).add(league.getLeagueName());
+                else
+                    myPlayers.put(id, new HashSet<>(List.of(league.getLeagueName())));
+            }
+            for(String id : league.getMatchup().getPlayerMap().keySet()){
+                if(oppPlayers.containsKey(id))
+                    oppPlayers.get(id).add(league.getLeagueName());
+                else
+                    oppPlayers.put(id, new HashSet<>(List.of(league.getLeagueName())));
+            }
+        }
 
         // Configure header row layouts (Push score to the far right using a Spacer)
         Region spacer = new Region();
@@ -158,6 +187,30 @@ public class PlayCell extends ListCell<Play> {
             setDefaults(teamPosText);
             TextFlow playerDetailsText = new TextFlow(playerNameText, new Text("\n"), teamPosText);
 
+            VBox leagueOwnership = new VBox(1);
+            leagueOwnership.setAlignment(Pos.CENTER_LEFT);
+
+            if(myPlayers.containsKey(participant.getPlayer().getEspnId())){
+                for(String leagueName : myPlayers.get(participant.getPlayer().getEspnId()))
+                {
+                    Text t = new Text(leagueName);
+                    setDefaults(t);
+                    t.setFont(Font.font("System", FontWeight.NORMAL, 8));
+                    t.setFill(Color.GREEN);
+                    leagueOwnership.getChildren().add(t);
+                }
+            }
+            if(oppPlayers.containsKey(participant.getPlayer().getEspnId())){
+                for(String leagueName : oppPlayers.get(participant.getPlayer().getEspnId()))
+                {
+                    Text t = new Text(leagueName);
+                    setDefaults(t);
+                    t.setFont(Font.font("System", FontWeight.NORMAL, 8));
+                    t.setFill(Color.RED);
+                    leagueOwnership.getChildren().add(t);
+                }
+            }
+
             Region middleSpacer = new Region();
             HBox.setHgrow(middleSpacer, Priority.ALWAYS);
 
@@ -178,7 +231,7 @@ public class PlayCell extends ListCell<Play> {
             TextFlow playPointsText = new TextFlow(pointsChangeText, new Text("\n"), ptsText);
             playPointsText.setTextAlignment(TextAlignment.CENTER);
 
-            Text scoreText = new Text(String.valueOf(df.format(player.getScore())));
+            Text scoreText = new Text(String.valueOf(df.format(participant.getTotalScore())));
             setDefaults(scoreText);
             scoreText.setStyle("-fx-font-weight: bold;");
             Text totalText = new Text("TOTAL");
@@ -187,7 +240,7 @@ public class PlayCell extends ListCell<Play> {
             totalScoreText.setTextAlignment(TextAlignment.CENTER);
 
             // Build layout structure
-            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, playPointsText, totalScoreText);
+            playerRow.getChildren().addAll(playerImage, playerDetailsText, middleSpacer, leagueOwnership, playPointsText, totalScoreText);
             participantPane.getChildren().add(playerRow);
         });
     }

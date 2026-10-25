@@ -9,7 +9,10 @@ module com.mmorano.fantasyfootballfeed {
     requires com.google.gson;
     requires javafx.graphics;
     requires java.compiler;
+    requires jdk.jdi;
 
     opens com.mmorano.fantasyfootballfeed to javafx.fxml;
     exports com.mmorano.fantasyfootballfeed;
+    exports com.mmorano.fantasyfootballfeed.Processing;
+    opens com.mmorano.fantasyfootballfeed.Processing to javafx.fxml;
 }
