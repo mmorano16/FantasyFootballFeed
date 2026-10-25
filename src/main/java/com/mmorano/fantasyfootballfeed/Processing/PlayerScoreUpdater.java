@@ -16,7 +16,7 @@ public class PlayerScoreUpdater {
 
     public void updateParticipantScores(Play play, HashMap<String, Player> players){
         play.getParticipants().forEach((id,participant) -> {
-            participant.setScoreChange(calculator.getPlayPoints(play, participant));
+            participant.setScoreChange(calculator.getPlayPoints(play, participant, scoring));
             Player player = players.get(participant.getPlayer().getEspnId());
             if(player != null) {
                 player.setScore(player.getScore() + participant.getScoreChange());

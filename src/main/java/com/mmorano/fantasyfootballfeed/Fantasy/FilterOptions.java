@@ -41,8 +41,8 @@ public class FilterOptions {
     public void setAllPlayers(boolean allPlayers) {
         this.allPlayers = allPlayers;
         if(allPlayers){
-            myPlayers = true;
-            opponentPlayers = true;
+            myPlayers = false;
+            opponentPlayers = false;
         }
     }
 
@@ -63,9 +63,14 @@ public class FilterOptions {
     }
 
     public enum Scoring{
-        PPR,
-        HALF,
-        STANDARD
+        PPR(1.0),
+        HALF(0.5),
+        STANDARD(0.0);
+
+        public final double value;
+        private Scoring(double value){
+            this.value = value;
+        }
     }
 
     public HashMap<String, Player> getFilteredPlayers(){

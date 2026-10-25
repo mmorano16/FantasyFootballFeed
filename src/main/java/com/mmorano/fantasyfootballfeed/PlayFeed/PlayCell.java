@@ -118,7 +118,7 @@ public class PlayCell extends ListCell<Play> {
                 TOorTDLabel.setManaged(false); // Prevents layout engine reserving invisible layout space
             } else {
                 TOorTDLabel.setText(play.isScoringPlay() ? "TD" :
-                        play.getPlayType().getAbbrev().equals("INTR") ? "INT" : "FUM");
+                        play.getPlayType().getAbbrev() != null && play.getPlayType().getAbbrev().equals("INTR") ? "INT" : "FUM");
                 TOorTDLabel.setTextFill(Color.WHITESMOKE);
                 TOorTDLabel.setBackground(new Background(new BackgroundFill(
                         play.isTurnover() ? Color.rgb(255, 0, 0, .5) : Color.rgb(0, 235, 30, 0.5),

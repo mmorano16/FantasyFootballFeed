@@ -23,7 +23,7 @@ public class PlayParser extends DataParser {
     private ParticipantParser participantParser;
     private PlayTypeParser playTypeParser = new PlayTypeParser();
     private HashMap<String, Event> events;
-    private FilterOptions filterOptions;
+    //private FilterOptions filterOptions;
     private PlayerScoreUpdater scoreUpdater;
     private final HashSet<String> skipPlays = new HashSet<>(List.of(
             "End of Game", "Timeout", "Two-minute warning", "Official Timeout", "Kickoff", "End Period", "End of Half", "Punt", "Coin Toss", "Muffed Punt Recovery", "Blocked Punt"
@@ -46,7 +46,7 @@ public class PlayParser extends DataParser {
             }
         }
         participantParser = new ParticipantParser(allPlayers);
-        scoreUpdater = new PlayerScoreUpdater(FilterOptions.Scoring.PPR);
+        scoreUpdater = new PlayerScoreUpdater(filterOptions.getScoring());
     }
 
 
@@ -56,7 +56,8 @@ public class PlayParser extends DataParser {
         JsonArray jArray = jObject.get("items").getAsJsonArray();
         for(JsonElement element : jArray) {
             Play play = parsePlay(element.getAsJsonObject());
-            if(!skipPlays.contains(play.getPlayType().getText()) && play.getParticipants().keySet().stream().anyMatch(x -> players.keySet().contains(x))) {
+            if(play.getPlayType() != null && !skipPlays.contains(play.getPlayType().getText()) &&
+                    play.getParticipants().keySet().stream().anyMatch(x -> players.keySet().contains(x))) {
                 scoreUpdater.updateParticipantScores(play, allPlayers);
                 plays.add(play);
             }
@@ -68,7 +69,8 @@ public class PlayParser extends DataParser {
         Play play = new Play();
         Event event = events.get(getEventIdFromLink(jObject.get("$ref").getAsString()));
         play.setId(jObject.get("id").getAsString());
-        play.setPlayType(playTypeParser.parsePlayType(jObject.get("type").getAsJsonObject()));
+        if(jObject.has("type"))
+            play.setPlayType(playTypeParser.parsePlayType(jObject.get("type").getAsJsonObject()));
         play.setText(jObject.get("text").getAsString());
         play.setAwayScore(jObject.get("awayScore").getAsInt());
         play.setAwayAbbrev(event.getAwayTeamAbbrev());

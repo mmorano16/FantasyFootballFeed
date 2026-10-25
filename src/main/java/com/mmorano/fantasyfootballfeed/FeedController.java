@@ -16,12 +16,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.HashSet;
 
@@ -33,63 +34,100 @@ public class FeedController {
 
     @FXML
     private AnchorPane paneFeedSettings = new AnchorPane();
+    @FXML
+    private Button btnAllPlayers, btnMyPlayers, btnOppPlayers, btnHalfPpr, btnFullPpr, btnStandard;
+
+//    private Border borderOn = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(50), new BorderWidths(2)));
+//    private Border borderOff = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(50), new BorderWidths(0)));
+
+    private String borderOn = "-fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 50; -fx-background-radius: 50;";
+    private String borderOff = "-fx-border-color: black; -fx-border-width: 0; -fx-border-radius: 50; -fx-background-radius: 50;";
 
     private SleeperDataFetcher sleeperDataFetcher;
     private HashSet<String> sleeperIds = new HashSet<>();
     private DataInitializer initializer;
+    FilterOptions options = new FilterOptions();
     Thread runner;
 
 
     public void initData(DataInitializer initializer){
         this.initializer = initializer;
         Button button2 = new Button("Load Plays");
-        FilterOptions options = new FilterOptions();
-//        Button btnMyPlayers = new Button("My Players");
-//        btnMyPlayers.setOnAction(Event -> {
-//            options.setMyPlayers(true);
-//            btnMyPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-//        });
-//        Button btnOppPlayers = new Button("Opp Players");
-//        btnOppPlayers.setOnAction(Event -> {
-//            options.setOpponentPlayers(true);
-//            btnOppPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-//        });
-//        Button btnAllPlayers = new Button("All Players");
-//        btnAllPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-//        btnAllPlayers.setOnAction(Event -> {
-//            options.setAllPlayers(true);
-//            btnAllPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-//            btnMyPlayers.setStyle("-fx-border-color: black; -fx-border-width: 0px;");
-//            btnOppPlayers.setStyle("-fx-border-color: black; -fx-border-width: 0px;");
-//        });
+        btnAllPlayers.setStyle(borderOn);
+        btnFullPpr.setStyle(borderOn);
+        options.setScoring(FilterOptions.Scoring.PPR);
+        options.setAllPlayers(true);
         button2.setLayoutX(200);
-        Label l1 = new Label("TEST");
-        l1.setLayoutX(50);
-        l1.setLayoutY(300);
         FeedWorker fw = new FeedWorker(initializer);
         button2.setOnAction(Event -> {
             EspnDataFetcher dataFetcher = new EspnDataFetcher();
             items.clear();
-            options.setMyPlayers(true);
-            options.setOpponentPlayers(true);
-            //options.setAllPlayers(true);
             items.addAll(dataFetcher.getPlays(initializer, options));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, initializer.user));
             listFeed.setItems(items);
+            listFeed.setFocusTraversable(false);
         });
-//        button2.setOnAction(Event -> {
-//            //l1.textProperty().bind(fw.messageProperty());
-//            ChangeListener<String> cl = (observableValue, s, t1) -> l1.setText(t1.toString());
-//            fw.messageProperty().addListener(cl);
-//            runner = new Thread(fw);
-//            runner.start();
-//        });
 
         paneFeedSettings.getChildren().add(button2);
-        paneFeedSettings.getChildren().add(l1);
+    }
 
-        //listFeed.setMouseTransparent(true);
-        listFeed.setFocusTraversable(false);
+    @FXML
+    private void onMyPlayersClicked(){
+        if(options.myPlayers()){
+            options.setMyPlayers(false);
+            btnMyPlayers.setStyle(borderOff);
+            if(!options.opponentPlayers()) {
+                options.setAllPlayers(true);
+                btnAllPlayers.setStyle(borderOn);
+            }
+        } else {
+            options.setMyPlayers(true);
+            btnMyPlayers.setStyle(borderOn);
+            btnAllPlayers.setStyle(borderOff);
+        }
+    }
+    @FXML
+    private void onOppPlayersClicked(){
+        if(options.opponentPlayers()){
+            options.setOpponentPlayers(false);
+            btnOppPlayers.setStyle(borderOff);
+            if(!options.myPlayers()){
+                options.setAllPlayers(true);
+                btnAllPlayers.setStyle(borderOn);
+            }
+        } else {
+            options.setOpponentPlayers(true);
+            btnOppPlayers.setStyle(borderOn);
+            btnAllPlayers.setStyle(borderOff);
+        }
+    }
+    @FXML
+    private void onAllPlayersClicked(){
+        options.setAllPlayers(true);
+        btnAllPlayers.setStyle(borderOn);
+        btnMyPlayers.setStyle(borderOff);
+        btnOppPlayers.setStyle(borderOff);
+    }
+    @FXML
+    private void onHalfPprClicked(){
+        options.setScoring(FilterOptions.Scoring.HALF);
+        btnHalfPpr.setStyle(borderOn);
+        btnFullPpr.setStyle(borderOff);
+        btnStandard.setStyle(borderOff);
+    }
+    @FXML
+    private void onFullPprClicked(){
+        options.setScoring(FilterOptions.Scoring.PPR);
+        btnHalfPpr.setStyle(borderOff);
+        btnFullPpr.setStyle(borderOn);
+        btnStandard.setStyle(borderOff);
+    }
+    @FXML
+    private void onStandardClicked(){
+        options.setScoring(FilterOptions.Scoring.STANDARD);
+        btnHalfPpr.setStyle(borderOff);
+        btnFullPpr.setStyle(borderOff);
+        btnStandard.setStyle(borderOn);
     }
 
 //    private Play getPlay(int num, double points){

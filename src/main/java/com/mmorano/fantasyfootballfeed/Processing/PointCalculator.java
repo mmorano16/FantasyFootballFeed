@@ -1,5 +1,6 @@
 package com.mmorano.fantasyfootballfeed.Processing;
 
+import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Participant;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
 
@@ -16,14 +17,15 @@ public class PointCalculator {
             touchdown = 6,
             tdPasser = 4,
             interception = -1,
-            reception = 1,
             fumble = -2,
             patKick = 1,
             conversion = 2,
             missedKick = -1;
+    private double reception;
 
-    public double getPlayPoints(Play play, Participant participant){
+    public double getPlayPoints(Play play, Participant participant, FilterOptions.Scoring scoring){
         double points = 0;
+        reception = scoring.value;
         ArrayList<String> playParticipants = new ArrayList<>();
         play.getParticipants().forEach((k,v)->{
             playParticipants.add(v.getType());
