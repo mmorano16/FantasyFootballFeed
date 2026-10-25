@@ -6,10 +6,8 @@ import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -18,7 +16,6 @@ import javafx.scene.text.*;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +41,7 @@ public class PlayCell extends ListCell<Play> {
 
     private final Font font = Font.font("System", FontWeight.NORMAL, 16);
     private final HashMap<String, String> teams;
-    private final User user;
+    //private final User user;
     private final double listWidth = listViewWidth - getOffset();// 36;
     private final DecimalFormat df = new DecimalFormat("0.00");
     private HashMap<String, HashSet<String>> myPlayers = new HashMap<>();//<PlayerID, LeagueName>
@@ -59,7 +56,7 @@ public class PlayCell extends ListCell<Play> {
     public PlayCell(HashMap<String, String> teams, User user) {
         super();
         this.teams = teams;
-        this.user = user;
+        //this.user = user;
         for(League league : user.getLeagues()){
             for(String id : league.getPlayerMap().keySet()){
                 if(myPlayers.containsKey(id))
@@ -182,10 +179,14 @@ public class PlayCell extends ListCell<Play> {
             // Data descriptor block
             Text playerNameText = new Text(player.getPlayerName());
             setDefaults(playerNameText);
+            if(playerNameText.getText().length() >= 16)
+                playerNameText.setFont(new Font(14));
+                //playerNameText.setText(playerNameText.getText().substring(0, 16));
             playerNameText.setStyle("-fx-font-weight: bold;");
             Text teamPosText = new Text(MessageFormat.format("{0} - {1}", teams.get(player.getTeamId()), player.getPosition()));
             setDefaults(teamPosText);
             TextFlow playerDetailsText = new TextFlow(playerNameText, new Text("\n"), teamPosText);
+            playerDetailsText.setMaxHeight(60);
 
             VBox leagueOwnership = new VBox(1);
             leagueOwnership.setAlignment(Pos.CENTER_LEFT);
