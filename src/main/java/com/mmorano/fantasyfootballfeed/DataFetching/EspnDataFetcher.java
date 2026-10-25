@@ -64,7 +64,7 @@ public class EspnDataFetcher extends DataFetcher {
         for(String response : getResponses(urls)){
             plays.addAll(playParser.parsePlays(response));
         }
-        plays.sort(Comparator.comparing(Play::getIdInt).reversed());
+        plays.sort(Comparator.comparing(Play::getTime).reversed());
         if(plays.size() > 50)
             plays.subList(50, plays.size()).clear();
         ArrayList<PlayCell> cells = new ArrayList<>();

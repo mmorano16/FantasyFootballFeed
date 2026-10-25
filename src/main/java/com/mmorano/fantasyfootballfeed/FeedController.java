@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 
 import java.util.HashSet;
 
@@ -42,6 +43,25 @@ public class FeedController {
     public void initData(DataInitializer initializer){
         this.initializer = initializer;
         Button button2 = new Button("Load Plays");
+        FilterOptions options = new FilterOptions();
+//        Button btnMyPlayers = new Button("My Players");
+//        btnMyPlayers.setOnAction(Event -> {
+//            options.setMyPlayers(true);
+//            btnMyPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
+//        });
+//        Button btnOppPlayers = new Button("Opp Players");
+//        btnOppPlayers.setOnAction(Event -> {
+//            options.setOpponentPlayers(true);
+//            btnOppPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
+//        });
+//        Button btnAllPlayers = new Button("All Players");
+//        btnAllPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
+//        btnAllPlayers.setOnAction(Event -> {
+//            options.setAllPlayers(true);
+//            btnAllPlayers.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
+//            btnMyPlayers.setStyle("-fx-border-color: black; -fx-border-width: 0px;");
+//            btnOppPlayers.setStyle("-fx-border-color: black; -fx-border-width: 0px;");
+//        });
         button2.setLayoutX(200);
         Label l1 = new Label("TEST");
         l1.setLayoutX(50);
@@ -50,9 +70,9 @@ public class FeedController {
         button2.setOnAction(Event -> {
             EspnDataFetcher dataFetcher = new EspnDataFetcher();
             items.clear();
-            FilterOptions options = new FilterOptions();
             options.setMyPlayers(true);
             options.setOpponentPlayers(true);
+            //options.setAllPlayers(true);
             items.addAll(dataFetcher.getPlays(initializer, options));
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, initializer.user));
             listFeed.setItems(items);

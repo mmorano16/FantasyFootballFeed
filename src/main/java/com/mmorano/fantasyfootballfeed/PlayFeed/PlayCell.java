@@ -206,7 +206,7 @@ public class PlayCell extends ListCell<Play> {
                     Text t = new Text(leagueName);
                     setDefaults(t);
                     t.setFont(Font.font("System", FontWeight.NORMAL, 8));
-                    t.setFill(Color.GREEN);
+                    t.setFill(Color.RED);
                     leagueOwnership.getChildren().add(t);
                 }
             }

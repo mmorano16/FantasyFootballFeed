@@ -29,10 +29,12 @@ public class PlayParser extends DataParser {
             "End of Game", "Timeout", "Two-minute warning", "Official Timeout", "Kickoff", "End Period", "End of Half", "Punt", "Coin Toss", "Muffed Punt Recovery", "Blocked Punt"
     ));
     private HashMap<String, Player> players;
+    private HashMap<String, Player> allPlayers;
     public PlayParser(DataInitializer initializer, FilterOptions filterOptions){
         teams = initializer.teams;
         events = initializer.events;
         players = new HashMap<>();
+        allPlayers = initializer.espnPlayers;
         if(filterOptions.allPlayers()){
             players.putAll(initializer.espnPlayers);
         } else {
@@ -43,7 +45,7 @@ public class PlayParser extends DataParser {
                     players.putAll(league.getMatchup().getPlayerMap());
             }
         }
-        participantParser = new ParticipantParser(players);
+        participantParser = new ParticipantParser(allPlayers);
         scoreUpdater = new PlayerScoreUpdater(FilterOptions.Scoring.PPR);
     }
 
@@ -55,7 +57,7 @@ public class PlayParser extends DataParser {
         for(JsonElement element : jArray) {
             Play play = parsePlay(element.getAsJsonObject());
             if(!skipPlays.contains(play.getPlayType().getText()) && play.getParticipants().keySet().stream().anyMatch(x -> players.keySet().contains(x))) {
-                scoreUpdater.updateParticipantScores(play, players);
+                scoreUpdater.updateParticipantScores(play, allPlayers);
                 plays.add(play);
             }
         }
