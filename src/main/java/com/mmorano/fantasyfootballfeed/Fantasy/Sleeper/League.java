@@ -5,6 +5,7 @@ import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class League {
     private String leagueName;
@@ -13,6 +14,7 @@ public class League {
     private ArrayList<Player> players = new ArrayList<>();
     private HashMap<String, Player> playerMap = new HashMap<>();
     private Matchup matchup = new Matchup();
+    private String leagueImage;
 
     public String getLeagueName() {
         return leagueName;
@@ -60,6 +62,22 @@ public class League {
 
     public void setRosterId(String rosterId) {
         this.rosterId = rosterId;
+    }
+
+    public String getLeagueImage() {
+        return leagueImage;
+    }
+
+    public void setLeagueImage(String leagueImage) {
+        this.leagueImage = leagueImage == null ?
+                "https://sleepercdn.com/images/v2/icons/league/nfl/" + getRandomColor() + ".png" :
+                "https://sleepercdn.com/avatars/" + leagueImage;
+    }
+
+    private String getRandomColor(){
+        Random r = new Random();
+        String[] colors = new String[]{"green", "red", "blue", "purple", "orange"};
+        return colors[r.nextInt(colors.length)];
     }
 
     @Override

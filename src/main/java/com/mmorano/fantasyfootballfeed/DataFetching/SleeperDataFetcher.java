@@ -33,22 +33,16 @@ public class SleeperDataFetcher extends DataFetcher {
             year = String.valueOf(LocalDate.now().getYear());
         else
             year = String.valueOf(LocalDate.now().getYear() - 1);
-        //pull league ids matching owner id
-        String leagueIdsResponse = getResponse(MessageFormat.format("{0}/user/{1}/leagues/nfl/{2}", apiUrl, ownerId, year));
-        HashMap<String, String> leagueIds = leagueParser.parseLeagueIds(leagueIdsResponse);
 
-        leagueIds.forEach((id, name) -> {
-            //pull league roster data
-            String leagueResponse = getResponse(MessageFormat.format("{0}/league/{1}/rosters", apiUrl, id));
-            League league = leagueParser.parseLeague(leagueResponse, ownerId, players);
-            //pull league matchup roster data
-            String matchupResponse = getResponse(MessageFormat.format("{0}/league/{1}/matchups/{2}", apiUrl, id, 7));
+        String leaguesResponse = getResponse(MessageFormat.format("{0}/user/{1}/leagues/nfl/{2}", apiUrl, ownerId, year));
+        leagues = leagueParser.parseLeagues(leaguesResponse);
+
+        for(League league : leagues){
+            String rosterResponse = getResponse(MessageFormat.format("{0}/league/{1}/rosters", apiUrl, league.getLeagueId()));
+            leagueParser.parseLeaguerRoster(rosterResponse, ownerId, league, players);
+            String matchupResponse = getResponse(MessageFormat.format("{0}/league/{1}/matchups/{2}", apiUrl, league.getLeagueId(), 7));
             league.setMatchup(matchupParser.parseMathup(matchupResponse, league.getRosterId(), players));
-            //set league name and league id
-            league.setLeagueName(name);
-            league.setLeagueId(id);
-            leagues.add(league);
-        });
+        }
 
         return leagues;
     }

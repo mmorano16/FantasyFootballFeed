@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LeagueParser extends DataParser{
@@ -31,8 +32,22 @@ public class LeagueParser extends DataParser{
         return ids;
     }
 
-    public League parseLeague(String json, String ownerId, HashMap<String, Player> players){
-        League league = new League();
+    public ArrayList<League> parseLeagues(String json){
+        ArrayList<League> leagues = new ArrayList<>();
+        JsonArray jArray = JsonParser.parseString(json).getAsJsonArray();
+        for(JsonElement element : jArray){
+            JsonObject jObject = element.getAsJsonObject();
+            League league = new League();
+            league.setLeagueId(jObject.get("league_id").getAsString());
+            league.setLeagueName(jObject.get("name").getAsString());
+            JsonElement avatar = jObject.get("avatar");
+            league.setLeagueImage(avatar.isJsonNull() ? null : avatar.getAsString());
+            leagues.add(league);
+        }
+        return leagues;
+    }
+
+    public void parseLeaguerRoster(String json, String ownerId, League league, HashMap<String, Player> players){
         JsonArray jArray = JsonParser.parseString(json).getAsJsonArray();
         JsonObject jObject = findObjectByValue(jArray, "owner_id", ownerId, true);
         league.setRosterId(jObject.get("roster_id").getAsString());
@@ -42,6 +57,5 @@ public class LeagueParser extends DataParser{
         for(Player player : league.getPlayers())
             if(player != null && player.getEspnId() != null)
                 league.getPlayerMap().put(player.getEspnId(), player);
-        return league;
     }
 }
