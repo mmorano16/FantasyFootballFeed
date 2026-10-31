@@ -28,4 +28,8 @@ public class MatchupParser extends DataParser {
         }
         return matchup;
     }
+
+    public int parseWeek(String json){
+        return JsonParser.parseString(json).getAsJsonObject().get("week").getAsInt();
+    }
 }

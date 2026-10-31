@@ -40,11 +40,15 @@ public class SleeperDataFetcher extends DataFetcher {
         for(League league : leagues){
             String rosterResponse = getResponse(MessageFormat.format("{0}/league/{1}/rosters", apiUrl, league.getLeagueId()));
             leagueParser.parseLeaguerRoster(rosterResponse, ownerId, league, players);
-            String matchupResponse = getResponse(MessageFormat.format("{0}/league/{1}/matchups/{2}", apiUrl, league.getLeagueId(), 8));
+            String matchupResponse = getResponse(MessageFormat.format("{0}/league/{1}/matchups/{2}", apiUrl, league.getLeagueId(), getWeek()));
             league.setMatchup(matchupParser.parseMathup(matchupResponse, league.getRosterId(), players));
         }
 
         return leagues;
+    }
+
+    public int getWeek(){
+        return matchupParser.parseWeek(getResponse(MessageFormat.format("{0}/state/nfl", apiUrl)));
     }
 // String sleeperUserId = leagueParser.parseOwnerId(sleeperDataFetcher.getSleeperUserId(username));
 //            leagueParser.setOwnerId(sleeperUserId);
