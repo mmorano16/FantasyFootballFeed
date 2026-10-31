@@ -18,17 +18,17 @@
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font></Label>
-                  <Button fx:id="btnAllPlayers" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#onAllPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="All Players">
+                  <Button fx:id="btnAllPlayers" focusTraversable="false" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#onAllPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="All Players">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnMyPlayers" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" onAction="#onMyPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-border-radius: 50; -fx-background-radius: 50;" text="My Players">
+                  <Button fx:id="btnMyPlayers" focusTraversable="false" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" onAction="#onMyPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-border-radius: 50; -fx-background-radius: 50;" text="My Players">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnOppPlayers" layoutX="199.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
+                  <Button fx:id="btnOppPlayers" focusTraversable="false" layoutX="199.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
                      <font>
                         <Font size="24.0" />
                      </font>
@@ -38,17 +38,17 @@
                         <Font name="System Bold" size="24.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btnHalfPpr" layoutX="14.0" layoutY="285.0" mnemonicParsing="false" onAction="#onHalfPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Half PPR">
+                  <Button fx:id="btnHalfPpr" focusTraversable="false" layoutX="14.0" layoutY="285.0" mnemonicParsing="false" onAction="#onHalfPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Half PPR">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnFullPpr" layoutX="168.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
+                  <Button fx:id="btnFullPpr" focusTraversable="false" layoutX="168.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="btnStandard" layoutX="14.0" layoutY="356.0" mnemonicParsing="false" onAction="#onStandardClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Standard">
+                  <Button fx:id="btnStandard" focusTraversable="false" layoutX="14.0" layoutY="356.0" mnemonicParsing="false" onAction="#onStandardClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Standard">
                      <font>
                         <Font size="24.0" />
                      </font>
@@ -65,7 +65,7 @@
                   <Insets />
                </HBox.margin>
             </ListView>
-            <TabPane fx:id="tabPaneMatchups" prefHeight="1080.0" prefWidth="1036.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="120.0" tabMinHeight="50.0" tabMinWidth="120.0" HBox.hgrow="ALWAYS">
+            <TabPane fx:id="tabPaneMatchups" prefHeight="1080.0" prefWidth="1036.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="500.0" tabMinHeight="50.0" tabMinWidth="500.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

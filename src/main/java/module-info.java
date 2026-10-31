@@ -10,6 +10,7 @@ module com.mmorano.fantasyfootballfeed {
     requires javafx.graphics;
     requires java.compiler;
     requires jdk.jdi;
+    requires java.desktop;
 
     opens com.mmorano.fantasyfootballfeed to javafx.fxml;
     exports com.mmorano.fantasyfootballfeed;

@@ -1,5 +1,7 @@
 package com.mmorano.fantasyfootballfeed;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
@@ -11,6 +13,8 @@ import com.mmorano.fantasyfootballfeed.PlayFeed.PlayCell;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayType;
 import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
+import com.mmorano.fantasyfootballfeed.UI.LeagueButtonBuilder;
+import com.mmorano.fantasyfootballfeed.UI.MatchupTabBuilder;
 import com.mmorano.fantasyfootballfeed.Workers.FeedWorker;
 import com.sun.jdi.ThreadReference;
 import javafx.beans.value.ChangeListener;
@@ -19,17 +23,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class FeedController {
@@ -41,6 +48,8 @@ public class FeedController {
     @FXML
     private AnchorPane paneFeedSettings = new AnchorPane();
     @FXML
+    private TabPane tabPaneMatchups = new TabPane();
+    @FXML
     private Button btnAllPlayers, btnMyPlayers, btnOppPlayers, btnHalfPpr, btnFullPpr, btnStandard;
 
 //    private Border borderOn = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(50), new BorderWidths(2)));
@@ -49,22 +58,58 @@ public class FeedController {
     private String borderOn = "-fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 50; -fx-background-radius: 50;";
     private String borderOff = "-fx-border-color: black; -fx-border-width: 0; -fx-border-radius: 50; -fx-background-radius: 50;";
 
-    private SleeperDataFetcher sleeperDataFetcher;
+    private SleeperDataFetcher sleeperDataFetcher = new SleeperDataFetcher();
     private HashSet<String> sleeperIds = new HashSet<>();
     private DataInitializer initializer;
-    FilterOptions options = new FilterOptions();
+    private FilterOptions options = new FilterOptions();
+    private HashMap<String, Double> playerScores;
     Thread runner;
 
     public void initData(DataInitializer initializer){
         this.initializer = initializer;
         Button button2 = new Button("Load Plays");
+        button2.setLayoutX(200);
+
         btnAllPlayers.setStyle(borderOn);
         btnFullPpr.setStyle(borderOn);
         options.setScoring(FilterOptions.Scoring.PPR);
         options.setAllPlayers(true);
         options.setLeagues(new ArrayList<>(initializer.user.getLeagues()));
 
-        button2.setLayoutX(200);
+//        Tab tab = new Tab(initializer.user.getLeagues().get(1).getLeagueName());
+//        Font font = Font.font("System", FontWeight.NORMAL, 24);
+//        tab.setStyle("-fx-font-size: 18px;");
+//        ImageView icon = new ImageView(initializer.user.getLeagues().get(1).getLeagueImage());
+//        icon.setFitHeight(48);
+//        icon.setFitWidth(48);
+//
+//        Rectangle clip = new Rectangle(icon.getFitWidth(), icon.getFitHeight());
+//        clip.setArcWidth(30);   // Adjust for desired corner roundness
+//        clip.setArcHeight(30);
+//        icon.setClip(clip);
+//
+//        tab.setGraphic(icon);
+//
+//        Label label = new Label();
+//        label.setPrefHeight(Region.USE_COMPUTED_SIZE);
+//        label.setPrefWidth(Region.USE_COMPUTED_SIZE);
+//        tab.setContent(label);
+//
+//        Text t = new Text(initializer.user.getLeagues().get(1).getLeagueName());
+//        t.setFont(Font.font("System", FontWeight.NORMAL, 18));
+//
+            tabPaneMatchups.setTabMinWidth(200);
+            tabPaneMatchups.setTabMaxWidth(200);
+            tabPaneMatchups.setTabMinHeight(50);
+            tabPaneMatchups.setTabMaxHeight(100);
+//        tabPaneMatchups.getTabs().add(tab);
+//        tabPaneMatchups.setStyle(font.getStyle());
+
+        paneFeedSettings.getChildren().addAll(LeagueButtonBuilder.getLeagueButton(initializer.user.getLeagues(), options));
+        paneFeedSettings.getChildren().add(button2);
+        tabPaneMatchups.getTabs().addAll(MatchupTabBuilder.getMatchupTabs(initializer.user.getLeagues()));
+
+
         FeedWorker fw = new FeedWorker(initializer);
         button2.setOnAction(Event -> {
             EspnDataFetcher dataFetcher = new EspnDataFetcher();
@@ -73,42 +118,36 @@ public class FeedController {
             listFeed.setCellFactory(param -> new PlayCell(initializer.teams, initializer.user));
             listFeed.setItems(items);
             listFeed.setFocusTraversable(false);
-        });
 
-        double leagueSpacer = 20;
-        double leagueHeight = 64;
-        double buttonY = 501;
-        Font font = Font.font("System", FontWeight.NORMAL, 24);
-
-        for(League league : initializer.user.getLeagues()){
-            Button button = new Button(league.getLeagueName());
-            button.setFont(font);
-            button.setStyle(borderOn);
-            ImageView image = new ImageView(league.getLeagueImage());
-            image.setFitHeight(48);
-            image.setFitWidth(48);
-            button.setGraphic(image);
-            button.setLayoutX(14);
-            button.setLayoutY(buttonY);
-            button.setPrefHeight(Region.USE_COMPUTED_SIZE);
-            button.setPrefWidth(Region.USE_COMPUTED_SIZE);
-            button.setMaxWidth(350);
-            buttonY += leagueHeight + leagueSpacer;
-
-            button.setOnAction(Event -> {
-                if(options.getLeagueIds().contains(league.getLeagueId())){
-                    button.setStyle(borderOff);
-                    options.getLeagueIds().remove(league.getLeagueId());
-                } else {
-                    button.setStyle(borderOn);
-                    options.getLeagueIds().add(league.getLeagueId());
+            //TODO - move this to a different area or something
+            playerScores = sleeperDataFetcher.getPlayerScores(initializer.user.getLeagues(), initializer.week);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            HashMap<String, Double> temp = new HashMap<>();
+            int i;
+            for(League league : initializer.user.getLeagues()){
+                i = 0;
+                for(Player player : league.getPlayers()){
+                    if(player != null) {
+                        String key = league.getLeagueId() + player.getSleeperId();
+                        if (playerScores.containsKey(key)) {
+                            temp.put(league.getRosterPositions()[i] + ": " + player.getPlayerName(), playerScores.get(key));
+                        }
+                    }
+                    i++;
                 }
-            });
-
-            paneFeedSettings.getChildren().add(button);
-        }
-
-        paneFeedSettings.getChildren().add(button2);
+                i = 0;
+                for(Player player : league.getMatchup().getPlayers()){
+                    if(player != null) {
+                        String key = league.getLeagueId() + player.getSleeperId();
+                        if (playerScores.containsKey(key)) {
+                            temp.put(league.getRosterPositions()[i] + ": " + player.getPlayerName(), playerScores.get(key));
+                        }
+                    }
+                    i++;
+                }
+            }
+            //label.setText(gson.toJson(temp));
+        });
     }
 
     @FXML

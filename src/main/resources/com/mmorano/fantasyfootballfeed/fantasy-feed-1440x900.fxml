@@ -9,7 +9,7 @@
    <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-             <AnchorPane fx:id="paneFeedSettings" maxWidth="-Infinity" prefHeight="1080.0" prefWidth="384.0" style="-fx-border-color: black; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
+             <AnchorPane fx:id="paneFeedSettings" maxWidth="-Infinity" prefHeight="900.0" prefWidth="384.0" style="-fx-border-color: black; -fx-border-width: 2;" HBox.hgrow="ALWAYS">
                  <HBox.margin>
                      <Insets />
                  </HBox.margin>
@@ -18,17 +18,17 @@
                          <font>
                              <Font name="System Bold" size="24.0" />
                          </font></Label>
-                     <Button fx:id="btnAllPlayers" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#onAllPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="All Players">
+                     <Button fx:id="btnAllPlayers" focusTraversable="false" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#onAllPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="All Players">
                          <font>
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnMyPlayers" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" onAction="#onMyPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="My Players">
+                     <Button fx:id="btnMyPlayers" focusTraversable="false" layoutX="14.0" layoutY="140.0" mnemonicParsing="false" onAction="#onMyPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="My Players">
                          <font>
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnOppPlayers" layoutX="189.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
+                     <Button fx:id="btnOppPlayers" focusTraversable="false" layoutX="189.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
                          <font>
                              <Font size="24.0" />
                          </font>
@@ -38,17 +38,17 @@
                              <Font name="System Bold" size="24.0" />
                          </font>
                      </Label>
-                     <Button fx:id="btnHalfPpr" layoutX="14.0" layoutY="285.0" mnemonicParsing="false" onAction="#onHalfPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Half PPR">
+                     <Button fx:id="btnHalfPpr" focusTraversable="false" layoutX="14.0" layoutY="285.0" mnemonicParsing="false" onAction="#onHalfPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Half PPR">
                          <font>
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnFullPpr" layoutX="158.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
+                     <Button fx:id="btnFullPpr" focusTraversable="false" layoutX="158.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
                          <font>
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnStandard" layoutX="14.0" layoutY="356.0" mnemonicParsing="false" onAction="#onStandardClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Standard">
+                     <Button fx:id="btnStandard" focusTraversable="false" layoutX="14.0" layoutY="356.0" mnemonicParsing="false" onAction="#onStandardClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Standard">
                          <font>
                              <Font size="24.0" />
                          </font>

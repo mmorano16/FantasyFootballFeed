@@ -15,6 +15,13 @@ public class League {
     private HashMap<String, Player> playerMap = new HashMap<>();
     private Matchup matchup = new Matchup();
     private String leagueImage;
+    private LeagueType leagueType;
+    private String[] rosterPositions;
+    private String avatar;
+
+    public enum LeagueType{
+        SLEEPER;
+    }
 
     public String getLeagueName() {
         return leagueName;
@@ -72,6 +79,30 @@ public class League {
         this.leagueImage = leagueImage == null ?
                 "https://sleepercdn.com/images/v2/icons/league/nfl/" + getRandomColor() + ".png" :
                 "https://sleepercdn.com/avatars/" + leagueImage;
+    }
+
+    public LeagueType getLeagueType() {
+        return leagueType;
+    }
+
+    public void setLeagueType(LeagueType leagueType) {
+        this.leagueType = leagueType;
+    }
+
+    public String[] getRosterPositions() {
+        return rosterPositions;
+    }
+
+    public void setRosterPositions(String[] rosterPositions) {
+        this.rosterPositions = rosterPositions;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     private String getRandomColor(){

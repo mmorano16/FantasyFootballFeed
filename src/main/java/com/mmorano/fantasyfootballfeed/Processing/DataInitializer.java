@@ -32,10 +32,12 @@ public class DataInitializer {
     private DataSaver dataSaver = new DataSaver();
     private final File playersFile = new File("players.ser");
     private final File saveFile = new File("save.ser");
+    public int week;
 
     public void initializeData(){
         teams = espnDataFetcher.getTeamData();
         events = espnDataFetcher.getEvents(teams);
+        week = sleeperDataFetcher.getWeek();
 
         //if(  !playersFile.exists() || fileNeedsUpdate()){
         if(!Files.exists(dataSaver.playersPath) || fileNeedsUpdate()){
@@ -57,12 +59,12 @@ public class DataInitializer {
             saveData = dataSaver.loadUser();
             //loadSaveData();
             user.setSleeperId(saveData.getSleeperId());
-            user.setLeagues(sleeperDataFetcher.getLeagueData(saveData.getSleeperId(), sleeperPlayers));
+            user.setLeagues(sleeperDataFetcher.getLeagueData(saveData.getSleeperId(), sleeperPlayers, week));
         }
     }
 
     public void updateUser(String sleeperId){
-        user.setLeagues(sleeperDataFetcher.getLeagueData(sleeperId, sleeperPlayers));
+        user.setLeagues(sleeperDataFetcher.getLeagueData(sleeperId, sleeperPlayers, week));
     }
 
     private void updateAllPlayers(){

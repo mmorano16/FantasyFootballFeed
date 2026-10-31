@@ -24,6 +24,12 @@ public class Player implements Serializable{
         this.playerName = player.getPlayerName();
         this.teamId = player.getTeamId();
         this.position = player.getPosition();
+        this.playerImage = player.getPlayerImage();
+    }
+    //set defense as player so that it appears in matchup summary
+    public Player(String defense){
+        this.playerName = defense;
+        this.sleeperId = defense;
     }
 
     public String getSleeperId() {
