@@ -49,7 +49,7 @@ public class PlayCell extends ListCell<Play> {
 
     private double getOffset(){
         return switch (Application.feedFxmlFile.substring(Application.feedFxmlFile.lastIndexOf("-") + 1)) {
-            case "1440x900.fxml" -> 61;
+            case "1440x900.fxml" -> 62;
             default -> 36;
         };
     }

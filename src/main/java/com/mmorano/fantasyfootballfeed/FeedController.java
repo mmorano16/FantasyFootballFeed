@@ -4,6 +4,7 @@ import com.mmorano.fantasyfootballfeed.DataFetching.EspnDataFetcher;
 import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
+import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.Fantasy.User;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Participant;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayCell;
@@ -21,9 +22,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class FeedController {
@@ -49,7 +55,6 @@ public class FeedController {
     FilterOptions options = new FilterOptions();
     Thread runner;
 
-
     public void initData(DataInitializer initializer){
         this.initializer = initializer;
         Button button2 = new Button("Load Plays");
@@ -57,6 +62,8 @@ public class FeedController {
         btnFullPpr.setStyle(borderOn);
         options.setScoring(FilterOptions.Scoring.PPR);
         options.setAllPlayers(true);
+        options.setLeagues(new ArrayList<>(initializer.user.getLeagues()));
+
         button2.setLayoutX(200);
         FeedWorker fw = new FeedWorker(initializer);
         button2.setOnAction(Event -> {
@@ -67,6 +74,39 @@ public class FeedController {
             listFeed.setItems(items);
             listFeed.setFocusTraversable(false);
         });
+
+        double leagueSpacer = 20;
+        double leagueHeight = 64;
+        double buttonY = 501;
+        Font font = Font.font("System", FontWeight.NORMAL, 24);
+
+        for(League league : initializer.user.getLeagues()){
+            Button button = new Button(league.getLeagueName());
+            button.setFont(font);
+            button.setStyle(borderOn);
+            ImageView image = new ImageView(league.getLeagueImage());
+            image.setFitHeight(48);
+            image.setFitWidth(48);
+            button.setGraphic(image);
+            button.setLayoutX(14);
+            button.setLayoutY(buttonY);
+            button.setPrefHeight(Region.USE_COMPUTED_SIZE);
+            button.setPrefWidth(Region.USE_COMPUTED_SIZE);
+            button.setMaxWidth(350);
+            buttonY += leagueHeight + leagueSpacer;
+
+            button.setOnAction(Event -> {
+                if(options.getLeagueIds().contains(league.getLeagueId())){
+                    button.setStyle(borderOff);
+                    options.getLeagueIds().remove(league.getLeagueId());
+                } else {
+                    button.setStyle(borderOn);
+                    options.getLeagueIds().add(league.getLeagueId());
+                }
+            });
+
+            paneFeedSettings.getChildren().add(button);
+        }
 
         paneFeedSettings.getChildren().add(button2);
     }

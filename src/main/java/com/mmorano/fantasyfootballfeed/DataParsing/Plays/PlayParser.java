@@ -38,7 +38,8 @@ public class PlayParser extends DataParser {
         if(filterOptions.allPlayers()){
             players.putAll(initializer.espnPlayers);
         } else {
-            for(League league : initializer.user.getLeagues()) {
+            for(League league : filterOptions.getLeagues().stream().filter(x
+                    -> filterOptions.getLeagueIds().contains(x.getLeagueId())).toList()) { //initializer.user.getLeagues()) {
                 if (filterOptions.myPlayers())
                     players.putAll(league.getPlayerMap());
                 if (filterOptions.opponentPlayers())

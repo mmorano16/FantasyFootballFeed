@@ -28,7 +28,7 @@
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnOppPlayers" layoutX="199.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
+                     <Button fx:id="btnOppPlayers" layoutX="189.0" layoutY="140.0" mnemonicParsing="false" onAction="#onOppPlayersClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="Opponents">
                          <font>
                              <Font size="24.0" />
                          </font>
@@ -43,7 +43,7 @@
                              <Font size="24.0" />
                          </font>
                      </Button>
-                     <Button fx:id="btnFullPpr" layoutX="168.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
+                     <Button fx:id="btnFullPpr" layoutX="158.0" layoutY="285.0" mnemonicParsing="false" onAction="#onFullPprClicked" style="-fx-border-color: black; -fx-border-width: 0; -fx-background-radius: 50;" text="PPR">
                          <font>
                              <Font size="24.0" />
                          </font>

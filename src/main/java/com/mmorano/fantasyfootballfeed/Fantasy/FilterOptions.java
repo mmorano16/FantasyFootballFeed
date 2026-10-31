@@ -4,13 +4,15 @@ import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class FilterOptions {
     private boolean myPlayers;
     private boolean opponentPlayers;
     private boolean allPlayers;
 
-    private ArrayList<League> leagues;
+    private ArrayList<League> leagues = new ArrayList<>();
+    private HashSet<String> leagueIds = new HashSet<>();
 
     private Scoring scoring;
 
@@ -50,8 +52,18 @@ public class FilterOptions {
         return leagues;
     }
 
+    public HashSet<String> getLeagueIds() {
+        return leagueIds;
+    }
+
+    public void setLeagueIds(HashSet<String> leagueIds) {
+        this.leagueIds = leagueIds;
+    }
+
     public void setLeagues(ArrayList<League> leagues) {
         this.leagues = leagues;
+        for(League league : leagues)
+            leagueIds.add(league.getLeagueId());
     }
 
     public Scoring getScoring() {
