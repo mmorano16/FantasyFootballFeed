@@ -65,7 +65,7 @@
                   <Insets />
                </HBox.margin>
             </ListView>
-            <TabPane fx:id="tabPaneMatchups" prefHeight="900.0" prefWidth="592.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="120.0" tabMinHeight="50.0" tabMinWidth="120.0" HBox.hgrow="ALWAYS">
+            <TabPane fx:id="tabPaneMatchups" prefHeight="900.0" prefWidth="516.0" style="-fx-border-width: 2; -fx-border-color: black;" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="120.0" tabMinHeight="50.0" tabMinWidth="120.0" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

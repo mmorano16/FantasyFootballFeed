@@ -65,6 +65,7 @@ public class FeedController {
         tabPaneMatchups.setTabMaxWidth(200);
         tabPaneMatchups.setTabMinHeight(50);
         tabPaneMatchups.setTabMaxHeight(100);
+        HBox.setHgrow(tabPaneMatchups, Priority.ALWAYS);
 
         paneFeedSettings.getChildren().addAll(LeagueButtonBuilder.getLeagueButton(initializer.user.getLeagues(), options));
         paneFeedSettings.getChildren().add(button2);

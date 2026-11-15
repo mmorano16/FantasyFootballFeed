@@ -1,5 +1,6 @@
 package com.mmorano.fantasyfootballfeed.Matchup;
 
+import com.mmorano.fantasyfootballfeed.Application;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
@@ -7,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -25,8 +27,14 @@ import java.util.stream.Collectors;
 public class MatchupTabBuilder {
 
     private static final double imageSize = 48;
-    private static final Font font = Font.font("System", FontWeight.NORMAL, 36);
+    private static final Font font = Application.feedFxmlFile.endsWith("1920x1080.fxml") ?
+            Font.font("System", FontWeight.NORMAL, 36) : Font.font("System", FontWeight.NORMAL, 18);
     private static HashMap<String, Double> playerScores;
+    private static double playerFontSize = Application.feedFxmlFile.endsWith("1920x1080.fxml") ? 24 : 14;
+    private static double headerFontSize = Application.feedFxmlFile.endsWith("1920x1080.fxml") ? 32 : 24;
+    private static double playerImageSize = Application.feedFxmlFile.endsWith("1920x1080.fxml") ? 48 : 32;
+    private static double teamImageSize = Application.feedFxmlFile.endsWith("1920x1080.fxml") ? 64 : 42;
+    private static double teamFontSize = Application.feedFxmlFile.endsWith("1920x1080.fxml") ? 48 : 32;
 
     public static ArrayList<Tab> getMatchupTabs(ArrayList<League> leagues, HashMap<String, Double> scores, ArrayList<Event> events){
         ArrayList<Tab> tabs = new ArrayList<>();
@@ -35,7 +43,7 @@ public class MatchupTabBuilder {
         for(League league : leagues){
             Tab tab = new Tab(league.getLeagueName());
             tab.setStyle("-fx-font-size: 12px;");
-            ImageView icon = new ImageView(league.getLeagueImage());
+            ImageView icon = new ImageView(new Image(league.getLeagueImage(), 48, 48, true, true));
             icon.setFitHeight(48);
             icon.setFitWidth(48);
             Rectangle clip = new Rectangle(icon.getFitWidth(), icon.getFitHeight());
@@ -109,19 +117,19 @@ public class MatchupTabBuilder {
         p1Image = p1.getPlayerImage() == null ? new ImageView() : new ImageView(p1.getPlayerImage());
         p1Image.setPreserveRatio(true);
         //p1Image.setFitWidth(48);
-        p1Image.setFitHeight(48);
+        p1Image.setFitHeight(playerImageSize);
         p2Image = p2.getPlayerImage() == null ? new ImageView() : new ImageView(p2.getPlayerImage());
         p2Image.setPreserveRatio(true);
         //p2Image.setFitWidth(48);
-        p2Image.setFitHeight(48);
+        p2Image.setFitHeight(playerImageSize);
         Text t1 = new Text(p1.getPlayerName());
-        t1.setFont(Font.font("System", FontWeight.NORMAL, 24));
+        t1.setFont(Font.font("System", FontWeight.NORMAL, playerFontSize));
         Text t2 = new Text(p2.getPlayerName());
-        t2.setFont(Font.font("System", FontWeight.NORMAL, 24));
+        t2.setFont(Font.font("System", FontWeight.NORMAL, playerFontSize));
         Text s1 = new Text(String.valueOf(playerScores.get(leagueId + p1.getSleeperId())));
-        s1.setFont(Font.font("System", FontWeight.SEMI_BOLD, 24));
+        s1.setFont(Font.font("System", FontWeight.SEMI_BOLD, playerFontSize));
         Text s2 = new Text(String.valueOf(playerScores.get(leagueId + p2.getSleeperId())));
-        s2.setFont(Font.font("System", FontWeight.SEMI_BOLD, 24));
+        s2.setFont(Font.font("System", FontWeight.SEMI_BOLD, playerFontSize));
         StackPane posPane = getPositionSquare(pos);
         Region spacer1 = new Region();
         HBox.setHgrow(spacer1, Priority.ALWAYS);
@@ -159,6 +167,11 @@ public class MatchupTabBuilder {
                 getTeamImage(league.getMatchup().getAvatar())
         );
 
+        if(Application.feedFxmlFile.endsWith("1440x900.fxml")){
+            hBoxRight.getChildren().remove(2);//remove team name for smaller screens
+            hBoxLeft.getChildren().remove(1);//remove team name for smaller screens
+        }
+
         HBox.setHgrow(hBoxLeft, Priority.ALWAYS);
         HBox.setHgrow(hBoxRight, Priority.ALWAYS);
 
@@ -176,14 +189,14 @@ public class MatchupTabBuilder {
 
     private static ImageView getTeamImage(String avatar){
         ImageView image = new ImageView(avatar);
-        image.setFitHeight(64);
-        image.setFitWidth(64);
+        image.setFitHeight(teamImageSize);
+        image.setFitWidth(teamImageSize);
         return image;
     }
 
     private static Label getTeamLabel(String teamName){
         Label team = new Label(teamName);
-        team.setPrefHeight(64);
+        team.setPrefHeight(teamImageSize);
         team.setFont(font);
         team.setAlignment(Pos.CENTER_LEFT);
         team.setUnderline(true);
@@ -192,9 +205,9 @@ public class MatchupTabBuilder {
 
     private static Label getTeamScoreLabel(String leagueId, ArrayList<Player> players){
         Label score = new Label(String.format("%.2f", getTeamScore(leagueId, players)));
-        score.setPrefHeight(64);
+        score.setPrefHeight(teamImageSize);
         score.setAlignment(Pos.CENTER_LEFT);
-        score.setFont(Font.font("System", FontWeight.BOLD, 32));
+        score.setFont(Font.font("System", FontWeight.BOLD, headerFontSize));
         return score;
     }
 
@@ -212,7 +225,7 @@ public class MatchupTabBuilder {
 
     private static Label getLeagueLabel(League league){
         Label leagueLabel = new Label(league.getLeagueName());
-        leagueLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, 32));
+        leagueLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, headerFontSize));
         leagueLabel.setPrefHeight(Region.USE_COMPUTED_SIZE);
         leagueLabel.setMaxWidth(Double.MAX_VALUE);
         leagueLabel.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
