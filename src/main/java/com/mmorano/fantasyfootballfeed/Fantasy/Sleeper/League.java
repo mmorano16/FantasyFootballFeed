@@ -18,6 +18,8 @@ public class League {
     private LeagueType leagueType;
     private String[] rosterPositions;
     private String avatar;
+    private String teamName;
+    private double teamScore;
 
     public enum LeagueType{
         SLEEPER;
@@ -103,6 +105,22 @@ public class League {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public double getTeamScore() {
+        return teamScore;
+    }
+
+    public void setTeamScore(double teamScore) {
+        this.teamScore = teamScore;
     }
 
     private String getRandomColor(){

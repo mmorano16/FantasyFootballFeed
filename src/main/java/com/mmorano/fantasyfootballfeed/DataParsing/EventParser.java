@@ -27,6 +27,7 @@ public class EventParser extends DataParser{
         JsonObject jObject = JsonParser.parseString(json).getAsJsonObject();
         String key = jObject.get("id").getAsString();
         event.setId(key);
+        event.setStartTime(jObject.get("date").getAsString());
         JsonArray jArray = jObject.get("competitors").getAsJsonArray();
         for(JsonElement element : jArray){
             jObject = element.getAsJsonObject();

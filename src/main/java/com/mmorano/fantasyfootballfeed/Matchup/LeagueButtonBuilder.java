@@ -1,4 +1,4 @@
-package com.mmorano.fantasyfootballfeed.UI;
+package com.mmorano.fantasyfootballfeed.Matchup;
 
 import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;

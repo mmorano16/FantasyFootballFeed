@@ -7,34 +7,19 @@ import com.mmorano.fantasyfootballfeed.DataFetching.SleeperDataFetcher;
 import com.mmorano.fantasyfootballfeed.Fantasy.FilterOptions;
 import com.mmorano.fantasyfootballfeed.Fantasy.Player;
 import com.mmorano.fantasyfootballfeed.Fantasy.Sleeper.League;
-import com.mmorano.fantasyfootballfeed.Fantasy.User;
-import com.mmorano.fantasyfootballfeed.PlayFeed.Participant;
+import com.mmorano.fantasyfootballfeed.PlayFeed.Event;
 import com.mmorano.fantasyfootballfeed.PlayFeed.PlayCell;
 import com.mmorano.fantasyfootballfeed.PlayFeed.Play;
-import com.mmorano.fantasyfootballfeed.PlayFeed.PlayType;
 import com.mmorano.fantasyfootballfeed.Processing.DataInitializer;
-import com.mmorano.fantasyfootballfeed.UI.LeagueButtonBuilder;
-import com.mmorano.fantasyfootballfeed.UI.MatchupTabBuilder;
+import com.mmorano.fantasyfootballfeed.Matchup.LeagueButtonBuilder;
+import com.mmorano.fantasyfootballfeed.Matchup.MatchupTabBuilder;
 import com.mmorano.fantasyfootballfeed.Workers.FeedWorker;
-import com.sun.jdi.ThreadReference;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Screen;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,38 +61,13 @@ public class FeedController {
         options.setAllPlayers(true);
         options.setLeagues(new ArrayList<>(initializer.user.getLeagues()));
 
-//        Tab tab = new Tab(initializer.user.getLeagues().get(1).getLeagueName());
-//        Font font = Font.font("System", FontWeight.NORMAL, 24);
-//        tab.setStyle("-fx-font-size: 18px;");
-//        ImageView icon = new ImageView(initializer.user.getLeagues().get(1).getLeagueImage());
-//        icon.setFitHeight(48);
-//        icon.setFitWidth(48);
-//
-//        Rectangle clip = new Rectangle(icon.getFitWidth(), icon.getFitHeight());
-//        clip.setArcWidth(30);   // Adjust for desired corner roundness
-//        clip.setArcHeight(30);
-//        icon.setClip(clip);
-//
-//        tab.setGraphic(icon);
-//
-//        Label label = new Label();
-//        label.setPrefHeight(Region.USE_COMPUTED_SIZE);
-//        label.setPrefWidth(Region.USE_COMPUTED_SIZE);
-//        tab.setContent(label);
-//
-//        Text t = new Text(initializer.user.getLeagues().get(1).getLeagueName());
-//        t.setFont(Font.font("System", FontWeight.NORMAL, 18));
-//
-            tabPaneMatchups.setTabMinWidth(200);
-            tabPaneMatchups.setTabMaxWidth(200);
-            tabPaneMatchups.setTabMinHeight(50);
-            tabPaneMatchups.setTabMaxHeight(100);
-//        tabPaneMatchups.getTabs().add(tab);
-//        tabPaneMatchups.setStyle(font.getStyle());
+        tabPaneMatchups.setTabMinWidth(200);
+        tabPaneMatchups.setTabMaxWidth(200);
+        tabPaneMatchups.setTabMinHeight(50);
+        tabPaneMatchups.setTabMaxHeight(100);
 
         paneFeedSettings.getChildren().addAll(LeagueButtonBuilder.getLeagueButton(initializer.user.getLeagues(), options));
         paneFeedSettings.getChildren().add(button2);
-        tabPaneMatchups.getTabs().addAll(MatchupTabBuilder.getMatchupTabs(initializer.user.getLeagues()));
 
 
         FeedWorker fw = new FeedWorker(initializer);
@@ -146,6 +106,8 @@ public class FeedController {
                     i++;
                 }
             }
+            tabPaneMatchups.getTabs().clear();
+            tabPaneMatchups.getTabs().addAll(MatchupTabBuilder.getMatchupTabs(initializer.user.getLeagues(), playerScores, new ArrayList<>(initializer.events.values())));
             //label.setText(gson.toJson(temp));
         });
     }

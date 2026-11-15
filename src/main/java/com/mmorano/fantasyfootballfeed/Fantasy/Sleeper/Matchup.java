@@ -11,6 +11,8 @@ public class Matchup {
     private String rosterId;
     private String ownerId;
     private String avatar;
+    private String teamName;
+    private String teamScore;
 
     public String getId() {
         return id;
@@ -58,5 +60,21 @@ public class Matchup {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getTeamScore() {
+        return teamScore;
+    }
+
+    public void setTeamScore(String teamScore) {
+        this.teamScore = teamScore;
     }
 }

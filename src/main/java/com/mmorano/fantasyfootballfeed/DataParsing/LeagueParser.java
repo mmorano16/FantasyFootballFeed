@@ -44,6 +44,20 @@ public class LeagueParser extends DataParser{
         return avatars;
     }
 
+    public HashMap<String, String> parseLeagueTeamNames(String json){
+        HashMap<String, String> names = new HashMap<>();
+        JsonArray jArray = JsonParser.parseString(json).getAsJsonArray();
+        for(JsonElement element : jArray){
+            JsonObject jObject = element.getAsJsonObject();
+            String ownerId = jObject.get("user_id").getAsString();
+            JsonObject metadata = jObject.get("metadata").getAsJsonObject();
+            String name = metadata.has("team_name") ?
+                    metadata.get("team_name").getAsString() : ("Team " + jObject.get("display_name"));
+            names.put(ownerId, name);
+        }
+        return names;
+    }
+
     private String getRandomColor(){
         Random r = new Random();
         String[] colors = new String[]{"green", "red", "blue", "purple", "orange"};

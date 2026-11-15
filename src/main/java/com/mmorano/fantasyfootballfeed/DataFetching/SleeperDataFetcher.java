@@ -46,13 +46,18 @@ public class SleeperDataFetcher extends DataFetcher {
         for(League league : leagues){
             String rosterResponse = getResponse(MessageFormat.format("{0}/league/{1}/rosters", apiUrl, league.getLeagueId()));
             leagueParser.parseLeaguerRoster(rosterResponse, ownerId, league, players);
+            //get all owner ids in order to link team avatars
             HashMap<String, String> ownerRosterIds = leagueParser.getOwnerRosterIds(rosterResponse);
             String usersResponse = getResponse(MessageFormat.format("{0}/league/{1}/users", apiUrl, league.getLeagueId()));
+            //parse team avatars into a ownerId,avatarLink map
             HashMap<String, String> leagueAvatars = leagueParser.parseLeagueAvatars(usersResponse);
+            HashMap<String, String> leagueTeamNames = leagueParser.parseLeagueTeamNames(usersResponse);
             league.setAvatar(leagueAvatars.get(ownerId));
+            league.setTeamName(leagueTeamNames.get(ownerId));
             String matchupResponse = getResponse(MessageFormat.format("{0}/league/{1}/matchups/{2}", apiUrl, league.getLeagueId(), week));
             league.setMatchup(matchupParser.parseMathup(matchupResponse, league.getRosterId(), players, ownerRosterIds));
             league.getMatchup().setAvatar(leagueAvatars.get(league.getMatchup().getOwnerId()));
+            league.getMatchup().setTeamName(leagueTeamNames.get(league.getMatchup().getOwnerId()));
             league.setLeagueType(League.LeagueType.SLEEPER);
         }
 
